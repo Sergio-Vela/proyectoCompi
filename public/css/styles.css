@@ -1,0 +1,112 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    padding: 20px;
+    background: #f7ffe5;
+}
+
+h2 {
+    margin-left: 20px;
+    font-weight: 500;
+    color: #4a7c00;
+}
+
+.main-container {
+    display: flex;
+    padding: 30px;
+    gap: 40px;
+    min-height: 400px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.left-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+.input-text {
+    padding: 12px;
+    font-size: 16px;
+    width: 80%;
+    border: 2px solid #cddc39;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-text:focus {
+    border-color: #8bc34a;
+    box-shadow: 0 0 5px rgba(139,195,74,0.5);
+}
+
+.btn-ejecutar {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #cddc39, #f4ff81);
+    color: #333;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-ejecutar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+
+.resultado {
+    padding: 15px;
+    font-size: 16px;
+    width: 80%;
+    flex-grow: 1;
+    resize: none;
+    border: 2px solid #cddc39;
+    border-radius: 8px;
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    overflow: hidden;
+}
+
+.tabla-container {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+#tablaErrores {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tablaErrores thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+th {
+    background: #cddc39;
+    color: #333;
+    padding: 12px;
+    font-weight: 500;
+}
+
+td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr {
+    background: #ffffe0;
+}

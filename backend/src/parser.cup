@@ -1,0 +1,157 @@
+import java_cup.runtime.*;
+
+parser code {:
+
+    public boolean hayErrores = false;
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+    }
+
+    public void syntax_error(Symbol cur_token) {
+
+        Errors.hayErrores = true;
+
+        String token = (cur_token.value != null)
+            ? cur_token.value.toString()
+            : sym.terminalNames[cur_token.sym];
+
+        System.out.println(
+            "ERROR: Sintactico | linea: " + (cur_token.left + 1) +
+            " columna: " + (cur_token.right + 1) +
+            " token: " + token
+        );
+    }
+
+:};
+
+terminal CREATE, TABLE, INSERT, INTO, VALUES, SELECT, FROM, STAR, SEMI, COMMA;
+terminal LPAREN, RPAREN;
+terminal Double NUMBER;
+terminal String STRING;
+terminal String ID;
+
+terminal UPDATE, SET, WHERE, JOIN, ON, AS;
+terminal INT, VARCHAR, DATETIME, DECIMAL;
+terminal CONTEO;
+terminal EQUALS, DOT;
+
+non terminal program;
+non terminal stmt_list;
+non terminal stmt;
+non terminal value;
+non terminal values_list;
+
+non terminal column_list;
+non terminal column;
+non terminal type;
+
+non terminal column_names;
+
+non terminal select_list;
+non terminal table_ref;
+non terminal table_factor;
+non terminal condition;
+non terminal field;
+non terminal field_list;
+
+non terminal assignments;
+non terminal assignment;
+
+start with program;
+
+program ::= stmt_list;
+
+stmt_list ::= stmt_list stmt
+            | stmt
+            ;
+
+// stmt ::= CREATE TABLE ID LPAREN column_list RPAREN SEMI
+//       | SELECT select_list FROM table_ref SEMI
+//       | UPDATE ID SET assignments SEMI
+//       | UPDATE ID SET assignments WHERE condition SEMI
+//       | INSERT INTO ID VALUES LPAREN values_list RPAREN SEMI
+//       | INSERT INTO ID LPAREN column_names RPAREN VALUES LPAREN values_list RPAREN SEMI
+//       | INSERT INTO ID SELECT select_list FROM table_ref SEMI
+//       | INSERT INTO ID LPAREN column_names RPAREN SELECT select_list FROM table_ref SEMI
+//       | error SEMI {: hayErrores = true; :}
+//       | error      {: hayErrores = true; :}
+//       ;
+
+stmt ::= CREATE TABLE ID LPAREN column_list RPAREN SEMI
+        {: System.out.println("CREATE TABLE valido"); :}
+      | SELECT select_list FROM table_ref SEMI
+        {: System.out.println("SELECT valido"); :}
+      | UPDATE ID SET assignments SEMI
+        {: System.out.println("UPDATE valido"); :}
+      | UPDATE ID SET assignments WHERE condition SEMI
+        {: System.out.println("UPDATE con WHERE valido"); :}
+      | INSERT INTO ID VALUES LPAREN values_list RPAREN SEMI
+        {: System.out.println("INSERT VALUES valido"); :}
+      | INSERT INTO ID LPAREN column_names RPAREN VALUES LPAREN values_list RPAREN SEMI
+        {: System.out.println("INSERT con columnas valido"); :}
+      | INSERT INTO ID SELECT select_list FROM table_ref SEMI
+        {: System.out.println("INSERT SELECT valido"); :}
+      | INSERT INTO ID LPAREN column_names RPAREN SELECT select_list FROM table_ref SEMI
+        {: System.out.println("INSERT SELECT con columnas valido"); :}
+      | error SEMI
+        {: hayErrores = true; :}
+      | error
+        {: hayErrores = true; :}
+      ;
+
+column_names ::= column_names COMMA ID
+               | ID
+               ;
+
+assignments ::= assignments COMMA assignment
+              | assignment
+              ;
+
+assignment ::= ID EQUALS value;
+
+select_list ::= STAR
+              | CONTEO LPAREN STAR RPAREN
+              | field_list
+              ;
+
+field ::= ID
+        | ID DOT ID
+        ;
+
+field_list ::= field_list COMMA field
+             | field
+             ;
+
+condition ::= field EQUALS field
+            | field EQUALS value
+            ;
+
+table_ref ::= table_ref JOIN table_factor ON LPAREN condition RPAREN
+            | table_factor
+            ;
+
+table_factor ::= ID
+               | ID ID
+               | ID AS ID
+               ;
+
+column_list ::= column_list COMMA column
+              | column
+              ;
+
+column ::= ID type;
+
+type ::= INT
+       | DATETIME
+       | VARCHAR LPAREN NUMBER RPAREN
+       | DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN
+       ;
+
+values_list ::= values_list COMMA value
+              | value
+              ;
+
+value ::= NUMBER
+        | STRING
+        ;

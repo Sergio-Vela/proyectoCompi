@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+<h2>Pseudo SQL</h2>
+
+<div class="main-container">
+
+    <div class="left-panel">
+        <input type="text" id="inputOperacion" class="input-text" placeholder="Ingrese una operación">
+
+        <button id="btnEjecutar" class="btn-ejecutar">ejecutar</button>
+
+        <br><br>
+
+        <input type="file" id="archivoSQL" accept=".sql">
+        <button id="btnSubir">Subir archivo</button>
+
+        <textarea id="resultado" class="resultado" placeholder="resultado en caso este correcto" readonly></textarea>
+    </div>
+
+    <div class="right-panel">
+        <div class="tabla-container">
+            <table id="tablaErrores">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>linea</th>
+                        <th>columna</th>
+                        <th>valor</th>
+                        <th>comentario</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyErrores"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/leerArchivo.js"></script>
+
+</body>
+</html>

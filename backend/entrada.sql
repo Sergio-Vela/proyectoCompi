@@ -1,0 +1,1 @@
+insert into clientes(id, nombre values (1, 'Carlos');
