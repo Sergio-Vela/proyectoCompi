@@ -220,15 +220,21 @@ public class parser extends java_cup.runtime.lr_parser {
 
     public void syntax_error(Symbol cur_token) {
 
-        Errors.hayErrores = true;
+        hayErrores = true;
 
-        String token = (cur_token.value != null)
-            ? cur_token.value.toString()
-            : sym.terminalNames[cur_token.sym];
+        String token;
+
+        if (cur_token.sym == sym.EOF) {
+            token = "EOF (posible falta de ';')";
+        } else {
+            token = (cur_token.value != null)
+                ? cur_token.value.toString()
+                : sym.terminalNames[cur_token.sym];
+        }
 
         System.out.println(
-            "ERROR: Sintactico | linea: " + (cur_token.left + 1) +
-            " columna: " + (cur_token.right + 1) +
+            "ERROR: Sintactico | linea: " + cur_token.left +
+            " columna: " + cur_token.right +
             " token: " + token
         );
     }
