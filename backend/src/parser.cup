@@ -1,125 +1,159 @@
 import java_cup.runtime.*;
+import java.util.*;
+import java.io.*;
 
 parser code {:
-
-    public boolean hayErrores = false;
-
+    
+        public boolean hayErrores = false;
+            private boolean salidaGenerada = false;
+                public final FileDatabase db = new FileDatabase();
+                
     public void report_fatal_error(String message, Object info) throws Exception {
-        report_error(message, info);
-        throw new Exception(message);
-    }
-
+            report_error(message, info);
+                    throw new Exception(message);
+                        }
+                        
     public void report_error(String message, Object info) {
-        // Se reporta manualmente en syntax_error para evitar ruido duplicado.
-    }
-
+            // Se reporta manualmente en syntax_error para evitar ruido duplicado.
+                }
+                
+    public void output(String message) {
+            System.out.println(message);
+                    salidaGenerada = true;
+                        }
+                        
+    public void outputRows(List<Map<String, String>> rows, List<String> fields) {
+            if (rows == null || rows.isEmpty()) {
+                        output("Resultado vacio");
+                                    return;
+                                            }
+                                            
+        List<String> columnNames = fields;
+                if (columnNames == null || columnNames.isEmpty()) {
+                            columnNames = new ArrayList<>(rows.get(0).keySet());
+                                    }
+                                    
+        output(String.join(",", columnNames));
+                for (Map<String, String> row : rows) {
+                            List<String> values = new ArrayList<>();
+                                        for (String column : columnNames) {
+                                                        values.add(row.getOrDefault(FileDatabase.normalizeColumnName(column), ""));
+                                                                    }
+                                                                                output(String.join(",", values));
+                                                                                        }
+                                                                                            }
+                                                                                            
+    public boolean hasOutput() {
+            return salidaGenerada;
+                }
+                
     private String nombreToken(int tokenId) {
-        if (tokenId >= 0 && tokenId < sym.terminalNames.length) {
-            return sym.terminalNames[tokenId];
-        }
-        return "TOKEN_" + tokenId;
-    }
-
+            if (tokenId >= 0 && tokenId < sym.terminalNames.length) {
+                        return sym.terminalNames[tokenId];
+                                }
+                                        return "TOKEN_" + tokenId;
+                                            }
+                                            
     private String textoToken(Symbol token) {
-        if (token == null || token.sym == sym.EOF) {
-            return "EOF";
-        }
-
+            if (token == null || token.sym == sym.EOF) {
+                        return "EOF";
+                                }
+                                
         if (Errors.tokenActual != null &&
-            Errors.tokenActual.sym == token.sym &&
-            Errors.tokenActual.line == token.left &&
-            Errors.tokenActual.column == token.right &&
-            Errors.tokenActual.lexema != null) {
-            return Errors.tokenActual.lexema;
-        }
-
+                    Errors.tokenActual.sym == token.sym &&
+                                Errors.tokenActual.line == token.left &&
+                                            Errors.tokenActual.column == token.right &&
+                                                        Errors.tokenActual.lexema != null) {
+                                                                    return Errors.tokenActual.lexema;
+                                                                            }
+                                                                            
         if (token.value != null) {
-            return token.value.toString();
-        }
-
+                    return token.value.toString();
+                            }
+                            
         return nombreToken(token.sym);
-    }
-
+            }
+            
     private boolean puedeCerrarElementoLista(int tokenId) {
-        switch (tokenId) {
-            case sym.ID:
-            case sym.INT:
-            case sym.DATETIME:
-            case sym.NUMBER:
-            case sym.STRING:
-            case sym.RPAREN:
-                return true;
-            default:
-                return false;
-        }
-    }
-
+            switch (tokenId) {
+                        case sym.ID:
+                                            case sym.INT:
+                                                                case sym.DATETIME:
+                                                                                    case sym.NUMBER:
+                                                                                                        case sym.STRING:
+                                                                                                                            case sym.RPAREN:
+                                                                                                                                                    return true;
+                                                                                                                                                                default:
+                                                                                                                                                                                        return false;
+                                                                                                                                                                                                }
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                    
     private boolean puedeIniciarElementoLista(int tokenId) {
-        switch (tokenId) {
-            case sym.ID:
-            case sym.NUMBER:
-            case sym.STRING:
-            case sym.CONTEO:
-            case sym.STAR:
-                return true;
-            default:
-                return false;
-        }
-    }
-
+            switch (tokenId) {
+                        case sym.ID:
+                                            case sym.NUMBER:
+                                                                case sym.STRING:
+                                                                                    case sym.CONTEO:
+                                                                                                        case sym.STAR:
+                                                                                                                                return true;
+                                                                                                                                            default:
+                                                                                                                                                                    return false;
+                                                                                                                                                                            }
+                                                                                                                                                                                }
+                                                                                                                                                                                
     private boolean faltaComa(Errors.TokenInfo previo, Symbol actual) {
-        if (previo == null || actual == null) {
-            return false;
-        }
-
+            if (previo == null || actual == null) {
+                        return false;
+                                }
+                                
         if (actual.sym == sym.EOF || actual.sym == sym.SEMI || actual.sym == sym.RPAREN) {
-            return false;
-        }
-
+                    return false;
+                            }
+                            
         return puedeCerrarElementoLista(previo.sym) && puedeIniciarElementoLista(actual.sym);
-    }
-
+            }
+            
     public void syntax_error(Symbol cur_token) {
-
+    
         hayErrores = true;
-        Errors.hayErrores = true;
-
+                Errors.hayErrores = true;
+                
         Errors.TokenInfo previo = Errors.ultimoToken;
-        String token = textoToken(cur_token);
-        int linea = cur_token.left > 0 ? cur_token.left : (Errors.tokenActual != null ? Errors.tokenActual.line : 1);
-        int columna = cur_token.right > 0 ? cur_token.right : (Errors.tokenActual != null ? Errors.tokenActual.column : 1);
-        String detalle;
-
+                String token = textoToken(cur_token);
+                        int linea = cur_token.left > 0 ? cur_token.left : (Errors.tokenActual != null ? Errors.tokenActual.line : 1);
+                                int columna = cur_token.right > 0 ? cur_token.right : (Errors.tokenActual != null ? Errors.tokenActual.column : 1);
+                                        String detalle;
+                                        
         if (cur_token.sym == sym.EOF) {
-            detalle = "Fin de archivo inesperado; posiblemente falta ';' al final de la sentencia";
-        } else if (Errors.hayErrorLexicoCercano(linea, columna)) {
-            detalle = "La sintaxis se rompio cerca de un error lexico previo";
-        } else if (previo != null && previo.sym == sym.RPAREN && cur_token.sym == sym.LPAREN) {
-            detalle = "Falta la palabra reservada VALUES antes de '('";
-        } else if (faltaComa(previo, cur_token)) {
-            detalle = "Falta una coma antes de '" + token + "'";
-        } else if (cur_token.sym == sym.SEMI) {
-            detalle = "La sentencia esta incompleta antes de ';'";
-        } else {
-            detalle = "Token inesperado '" + token + "'";
-        }
-
+                    detalle = "Fin de archivo inesperado; posiblemente falta ';' al final de la sentencia";
+                            } else if (Errors.hayErrorLexicoCercano(linea, columna)) {
+                                        detalle = "La sintaxis se rompio cerca de un error lexico previo";
+                                                } else if (previo != null && previo.sym == sym.RPAREN && cur_token.sym == sym.LPAREN) {
+                                                            detalle = "Falta la palabra reservada VALUES antes de '('";
+                                                                    } else if (faltaComa(previo, cur_token)) {
+                                                                                detalle = "Falta una coma antes de '" + token + "'";
+                                                                                        } else if (cur_token.sym == sym.SEMI) {
+                                                                                                    detalle = "La sentencia esta incompleta antes de ';'";
+                                                                                                            } else {
+                                                                                                                        detalle = "Token inesperado '" + token + "'";
+                                                                                                                                }
+                                                                                                                                
         String clave = "SINT:" + linea + ":" + columna + ":" + detalle;
-        if (!Errors.debeReportar(clave)) {
-            return;
-        }
-
+                if (!Errors.debeReportar(clave)) {
+                            return;
+                                    }
+                                    
         System.out.println(
-            "ERROR: Sintactico | linea: " + linea +
-            " | columna: " + columna +
-            " | token: " + token +
-            " | detalle: " + detalle
-        );
-    }
-
+                    "ERROR: Sintactico | linea: " + linea +
+                                " | columna: " + columna +
+                                            " | token: " + token +
+                                                        " | detalle: " + detalle
+                                                                );
+                                                                    }
+                                                                    
 :};
 
-terminal CREATE, TABLE, INSERT, INTO, VALUES, SELECT, FROM, STAR, SEMI, COMMA;
+terminal CREATE, DATABASE, TABLE, INSERT, INTO, VALUES, SELECT, FROM, STAR, SEMI, COMMA;
 terminal LPAREN, RPAREN;
 terminal Double NUMBER;
 terminal String STRING;
@@ -133,24 +167,24 @@ terminal EQUALS, DOT;
 non terminal program;
 non terminal stmt_list;
 non terminal stmt;
-non terminal value;
-non terminal values_list;
+non terminal java.lang.String value;
+non terminal java.util.List<String> values_list;
 
-non terminal column_list;
-non terminal column;
-non terminal type;
+non terminal java.util.List<String> column_list;
+non terminal java.lang.String column;
+non terminal java.lang.String type;
 
-non terminal column_names;
+non terminal java.util.List<String> column_names;
 
-non terminal select_list;
-non terminal table_ref;
-non terminal table_factor;
-non terminal condition;
-non terminal field;
-non terminal field_list;
+non terminal java.util.List<String> select_list;
+non terminal java.lang.String table_ref;
+non terminal java.lang.String table_factor;
+non terminal FileDatabase.Condition condition;
+non terminal java.lang.String field;
+non terminal java.util.List<String> field_list;
 
-non terminal assignments;
-non terminal assignment;
+non terminal java.util.Map<String,String> assignments;
+non terminal java.util.Map<String,String> assignment;
 
 start with program;
 
@@ -158,82 +192,246 @@ program ::= stmt_list;
 
 stmt_list ::= stmt_list stmt
             | stmt
-            ;
-
-stmt ::= CREATE TABLE ID LPAREN column_list RPAREN SEMI
-        {: System.out.println("CREATE TABLE valido"); :}
-      | SELECT select_list FROM table_ref SEMI
-        {: System.out.println("SELECT valido"); :}
-      | UPDATE ID SET assignments SEMI
-        {: System.out.println("UPDATE valido"); :}
-      | UPDATE ID SET assignments WHERE condition SEMI
-        {: System.out.println("UPDATE con WHERE valido"); :}
-      | INSERT INTO ID VALUES LPAREN values_list RPAREN SEMI
-        {: System.out.println("INSERT VALUES valido"); :}
-      | INSERT INTO ID LPAREN column_names RPAREN VALUES LPAREN values_list RPAREN SEMI
-        {: System.out.println("INSERT con columnas valido"); :}
-      | INSERT INTO ID SELECT select_list FROM table_ref SEMI
-        {: System.out.println("INSERT SELECT valido"); :}
-      | INSERT INTO ID LPAREN column_names RPAREN SELECT select_list FROM table_ref SEMI
-        {: System.out.println("INSERT SELECT con columnas valido"); :}
-      | error SEMI
-        {: hayErrores = true; :}
-      | error
-        {: hayErrores = true; :}
-      ;
-
+                        ;
+                        
+stmt ::= CREATE DATABASE ID SEMI
+        {: 
+                            try {
+                                            db.createDatabase($3);
+                                                            output("CREATE DATABASE ejecutado");
+                                                                        } catch (Exception e) {
+                                                                                        hayErrores = true;
+                                                                                                        Errors.hayErrores = true;
+                                                                                                                        output("ERROR: " + e.getMessage());
+                                                                                                                                    }
+                                                                                                                                            :}
+                                                                                                                                                  | CREATE TABLE ID LPAREN column_list RPAREN SEMI
+                                                                                                                                                          {: 
+                                                                                                                                                                              try {
+                                                                                                                                                                                              db.createTable($3, $6);
+                                                                                                                                                                                                              output("CREATE TABLE ejecutado");
+                                                                                                                                                                                                                          } catch (Exception e) {
+                                                                                                                                                                                                                                          hayErrores = true;
+                                                                                                                                                                                                                                                          Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                          output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                                              :}
+                                                                                                                                                                                                                                                                                                    | SELECT select_list FROM table_ref SEMI
+                                                                                                                                                                                                                                                                                                            {: 
+                                                                                                                                                                                                                                                                                                                                try {
+                                                                                                                                                                                                                                                                                                                                                if ($2.size() == 1 && "COUNT(*)".equalsIgnoreCase($2.get(0))) {
+                                                                                                                                                                                                                                                                                                                                                                    output("COUNT: " + db.selectCount($4, null));
+                                                                                                                                                                                                                                                                                                                                                                                    } else {
+                                                                                                                                                                                                                                                                                                                                                                                                        List<Map<String, String>> rows = db.select($2, $4, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                            outputRows(rows, $2);
+                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | UPDATE ID SET assignments SEMI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          {: 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              int count = db.update($2, $4, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              output("UPDATE ejecutado: " + count + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | UPDATE ID SET assignments WHERE condition SEMI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {: 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                int count = db.update($2, $4, $6);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                output("UPDATE ejecutado: " + count + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | INSERT INTO ID VALUES LPAREN values_list RPAREN SEMI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {: 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  db.insert($3, null, $6);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  output("INSERT ejecutado");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | INSERT INTO ID LPAREN column_names RPAREN VALUES LPAREN values_list RPAREN SEMI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {: 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    db.insert($3, $5, $10);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    output("INSERT ejecutado");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | INSERT INTO ID SELECT select_list FROM table_ref SEMI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {: 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      List<Map<String, String>> rows = db.select($5, $7, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      db.insertRows($3, null, rows);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      output("INSERT SELECT ejecutado: " + rows.size() + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | INSERT INTO ID LPAREN column_names RPAREN SELECT select_list FROM table_ref SEMI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {: 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        List<Map<String, String>> rows = db.select($7, $9, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        db.insertRows($3, $5, rows);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        output("INSERT SELECT ejecutado: " + rows.size() + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | error SEMI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      {: hayErrores = true; :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | error
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {: hayErrores = true; :}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 column_names ::= column_names COMMA ID
-               | ID
-               ;
-
+               {:
+                                          $1.add($3);
+                                                             RESULT = $1;
+                                                                            :}
+                                                                                           | ID
+                                                                                                          {: 
+                                                                                                                                     List<String> cols = new ArrayList<>();
+                                                                                                                                                        cols.add($1);
+                                                                                                                                                                           RESULT = cols;
+                                                                                                                                                                                          :}
+                                                                                                                                                                                                         ;
+                                                                                                                                                                                                         
 assignments ::= assignments COMMA assignment
-              | assignment
-              ;
-
-assignment ::= ID EQUALS value;
-
+              {: 
+                                        $1.putAll($3);
+                                                          RESULT = $1;
+                                                                        :}
+                                                                                      | assignment
+                                                                                                    {: RESULT = $1; :}
+                                                                                                                  ;
+                                                                                                                  
+assignment ::= ID EQUALS value
+              {: 
+                                        Map<String, String> map = new LinkedHashMap<>();
+                                                          map.put($1, $3);
+                                                                            RESULT = map;
+                                                                                          :}
+                                                                                                        ;
+                                                                                                        
 select_list ::= STAR
-              | CONTEO LPAREN STAR RPAREN
-              | field_list
-              ;
-
+              {: 
+                                        List<String> list = new ArrayList<>();
+                                                          list.add("*");
+                                                                            RESULT = list;
+                                                                                          :}
+                                                                                                        | CONTEO LPAREN STAR RPAREN
+                                                                                                                      {: 
+                                                                                                                                                List<String> list = new ArrayList<>();
+                                                                                                                                                                  list.add("COUNT(*)");
+                                                                                                                                                                                    RESULT = list;
+                                                                                                                                                                                                  :}
+                                                                                                                                                                                                                | field_list
+                                                                                                                                                                                                                              {: RESULT = $1; :}
+                                                                                                                                                                                                                                            ;
+                                                                                                                                                                                                                                            
 field ::= ID
-        | ID DOT ID
-        ;
-
+        {: RESULT = $1; :}
+                | ID DOT ID
+                        {: RESULT = $1 + "." + $3; :}
+                                ;
+                                
 field_list ::= field_list COMMA field
-             | field
-             ;
-
+             {: 
+                                      $1.add($3);
+                                                       RESULT = $1;
+                                                                    :}
+                                                                                 | field
+                                                                                              {: 
+                                                                                                                       List<String> fields = new ArrayList<>();
+                                                                                                                                        fields.add($1);
+                                                                                                                                                         RESULT = fields;
+                                                                                                                                                                      :}
+                                                                                                                                                                                   ;
+                                                                                                                                                                                   
 condition ::= field EQUALS field
-            | field EQUALS value
-            ;
-
+            {: RESULT = new FileDatabase.Condition($1, $3, true); :}
+                        | field EQUALS value
+                                    {: RESULT = new FileDatabase.Condition($1, $3, false); :}
+                                                ;
+                                                
 table_ref ::= table_ref JOIN table_factor ON LPAREN condition RPAREN
-            | table_factor
-            ;
-
+            {: throw new RuntimeException("JOIN no soportado"); :}
+                        | table_factor
+                                    {: RESULT = $1; :}
+                                                ;
+                                                
 table_factor ::= ID
-               | ID ID
-               | ID AS ID
-               ;
-
+               {: RESULT = $1; :}
+                              | ID ID
+                                             {: RESULT = $1; :}
+                                                            | ID AS ID
+                                                                           {: RESULT = $1; :}
+                                                                                          ;
+                                                                                          
 column_list ::= column_list COMMA column
-              | column
-              ;
-
-column ::= ID type;
-
+              {: 
+                                        $1.add($3);
+                                                          RESULT = $1;
+                                                                        :}
+                                                                                      | column
+                                                                                                    {: 
+                                                                                                                              List<String> cols = new ArrayList<>();
+                                                                                                                                                cols.add($1);
+                                                                                                                                                                  RESULT = cols;
+                                                                                                                                                                                :}
+                                                                                                                                                                                              ;
+                                                                                                                                                                                              
+column ::= ID type
+        {: RESULT = $1; :}
+                ;
+                
 type ::= INT
        | DATETIME
-       | VARCHAR LPAREN NUMBER RPAREN
-       | DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN
-       ;
-
+              | VARCHAR LPAREN NUMBER RPAREN
+                     | DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN
+                            ;
+                            
 values_list ::= values_list COMMA value
-              | value
-              ;
-
+              {: 
+                                        $1.add($3);
+                                                          RESULT = $1;
+                                                                        :}
+                                                                                      | value
+                                                                                                    {: 
+                                                                                                                              List<String> values = new ArrayList<>();
+                                                                                                                                                values.add($1);
+                                                                                                                                                                  RESULT = values;
+                                                                                                                                                                                :}
+                                                                                                                                                                                              ;
+                                                                                                                                                                                              
 value ::= NUMBER
-        | STRING
-        ;
+        {: RESULT = $1.toString(); :}
+                | STRING
+                        {: 
+                                            String text = $1.toString();
+                                                        RESULT = text.length() >= 2 ? text.substring(1, text.length() - 1) : text;
+                                                                :}
+                                                                        ;
+                                                                        

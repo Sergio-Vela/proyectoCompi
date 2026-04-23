@@ -19,7 +19,7 @@ public class Main {
 
             p.parse();
 
-            if (!Errors.hayErrores && !p.hayErrores) {
+            if (!Errors.hayErrores && !p.hayErrores && !p.hasOutput()) {
                 System.out.println("OK");
             }
 

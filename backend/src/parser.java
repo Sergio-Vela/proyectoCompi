@@ -4,6 +4,8 @@
 //----------------------------------------------------
 
 import java_cup.runtime.*;
+import java.util.*;
+import java.io.*;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -29,20 +31,21 @@ public class parser extends java_cup.runtime.lr_parser {
   /** Production table. */
   protected static final short _production_table[][] = 
     unpackFromStrings(new String[] {
-    "\000\054\000\002\002\004\000\002\002\003\000\002\003" +
-    "\004\000\002\003\003\000\002\004\011\000\002\004\007" +
-    "\000\002\004\007\000\002\004\011\000\002\004\012\000" +
-    "\002\004\015\000\002\004\012\000\002\004\015\000\002" +
-    "\004\004\000\002\004\003\000\002\012\005\000\002\012" +
-    "\003\000\002\021\005\000\002\021\003\000\002\022\005" +
-    "\000\002\013\003\000\002\013\006\000\002\013\003\000" +
-    "\002\017\003\000\002\017\005\000\002\020\005\000\002" +
-    "\020\003\000\002\016\005\000\002\016\005\000\002\014" +
-    "\011\000\002\014\003\000\002\015\003\000\002\015\004" +
-    "\000\002\015\005\000\002\007\005\000\002\007\003\000" +
-    "\002\010\004\000\002\011\003\000\002\011\003\000\002" +
-    "\011\006\000\002\011\010\000\002\006\005\000\002\006" +
-    "\003\000\002\005\003\000\002\005\003" });
+    "\000\055\000\002\002\004\000\002\002\003\000\002\003" +
+    "\004\000\002\003\003\000\002\004\006\000\002\004\011" +
+    "\000\002\004\007\000\002\004\007\000\002\004\011\000" +
+    "\002\004\012\000\002\004\015\000\002\004\012\000\002" +
+    "\004\015\000\002\004\004\000\002\004\003\000\002\012" +
+    "\005\000\002\012\003\000\002\021\005\000\002\021\003" +
+    "\000\002\022\005\000\002\013\003\000\002\013\006\000" +
+    "\002\013\003\000\002\017\003\000\002\017\005\000\002" +
+    "\020\005\000\002\020\003\000\002\016\005\000\002\016" +
+    "\005\000\002\014\011\000\002\014\003\000\002\015\003" +
+    "\000\002\015\004\000\002\015\005\000\002\007\005\000" +
+    "\002\007\003\000\002\010\004\000\002\011\003\000\002" +
+    "\011\003\000\002\011\006\000\002\011\010\000\002\006" +
+    "\005\000\002\006\003\000\002\005\003\000\002\005\003" +
+    "" });
 
   /** Access to production table. */
   public short[][] production_table() {return _production_table;}
@@ -50,81 +53,83 @@ public class parser extends java_cup.runtime.lr_parser {
   /** Parse-action table. */
   protected static final short[][] _action_table = 
     unpackFromStrings(new String[] {
-    "\000\160\000\014\003\006\004\004\006\007\011\013\023" +
-    "\011\001\002\000\004\005\134\001\002\000\004\002\133" +
-    "\001\002\000\020\002\ufff4\003\ufff4\004\ufff4\006\ufff4\011" +
-    "\ufff4\014\132\023\ufff4\001\002\000\004\007\073\001\002" +
-    "\000\016\002\ufffe\003\ufffe\004\ufffe\006\ufffe\011\ufffe\023" +
-    "\ufffe\001\002\000\004\022\056\001\002\000\016\002\000" +
-    "\003\006\004\004\006\007\011\013\023\011\001\002\000" +
-    "\010\013\015\022\014\035\016\001\002\000\016\012\uffeb" +
-    "\014\uffeb\015\uffeb\017\uffeb\036\uffeb\037\053\001\002\000" +
-    "\004\012\uffee\001\002\000\004\016\050\001\002\000\006" +
-    "\012\uffe8\015\uffe8\001\002\000\004\012\024\001\002\000" +
-    "\006\012\uffec\015\022\001\002\000\004\022\014\001\002" +
-    "\000\006\012\uffe9\015\uffe9\001\002\000\004\022\025\001" +
-    "\002\000\014\014\uffe3\022\045\026\uffe3\027\uffe3\030\046" +
-    "\001\002\000\006\014\uffe4\026\uffe4\001\002\000\006\014" +
-    "\031\026\030\001\002\000\004\022\025\001\002\000\016" +
-    "\002\ufffc\003\ufffc\004\ufffc\006\ufffc\011\ufffc\023\ufffc\001" +
-    "\002\000\004\027\033\001\002\000\004\016\034\001\002" +
-    "\000\004\022\014\001\002\000\004\036\040\001\002\000" +
-    "\004\017\037\001\002\000\006\014\uffe5\026\uffe5\001\002" +
-    "\000\010\020\042\021\041\022\014\001\002\000\012\014" +
-    "\uffd6\015\uffd6\017\uffd6\025\uffd6\001\002\000\012\014\uffd7" +
-    "\015\uffd7\017\uffd7\025\uffd7\001\002\000\006\014\uffe6\017" +
-    "\uffe6\001\002\000\006\014\uffe7\017\uffe7\001\002\000\010" +
-    "\014\uffe2\026\uffe2\027\uffe2\001\002\000\004\022\047\001" +
-    "\002\000\010\014\uffe1\026\uffe1\027\uffe1\001\002\000\004" +
-    "\013\051\001\002\000\004\017\052\001\002\000\004\012" +
-    "\uffed\001\002\000\004\022\054\001\002\000\014\012\uffea" +
-    "\014\uffea\015\uffea\017\uffea\036\uffea\001\002\000\016\002" +
-    "\uffff\003\uffff\004\uffff\006\uffff\011\uffff\023\uffff\001\002" +
-    "\000\004\024\057\001\002\000\004\022\060\001\002\000" +
-    "\004\036\071\001\002\000\010\014\065\015\063\025\064" +
-    "\001\002\000\010\014\ufff0\015\ufff0\025\ufff0\001\002\000" +
-    "\004\022\060\001\002\000\004\022\014\001\002\000\016" +
-    "\002\ufffb\003\ufffb\004\ufffb\006\ufffb\011\ufffb\023\ufffb\001" +
-    "\002\000\004\014\067\001\002\000\016\002\ufffa\003\ufffa" +
-    "\004\ufffa\006\ufffa\011\ufffa\023\ufffa\001\002\000\010\014" +
-    "\ufff1\015\ufff1\025\ufff1\001\002\000\006\020\042\021\041" +
-    "\001\002\000\010\014\uffef\015\uffef\025\uffef\001\002\000" +
-    "\004\022\074\001\002\000\010\010\075\011\077\016\076" +
-    "\001\002\000\004\016\126\001\002\000\004\022\104\001" +
-    "\002\000\010\013\015\022\014\035\016\001\002\000\004" +
-    "\012\101\001\002\000\004\022\025\001\002\000\006\014" +
-    "\103\026\030\001\002\000\016\002\ufff7\003\ufff7\004\ufff7" +
-    "\006\ufff7\011\ufff7\023\ufff7\001\002\000\006\015\ufff2\017" +
-    "\ufff2\001\002\000\006\015\106\017\107\001\002\000\004" +
-    "\022\125\001\002\000\006\010\110\011\111\001\002\000" +
-    "\004\016\116\001\002\000\010\013\015\022\014\035\016" +
-    "\001\002\000\004\012\113\001\002\000\004\022\025\001" +
-    "\002\000\006\014\115\026\030\001\002\000\016\002\ufff6" +
-    "\003\ufff6\004\ufff6\006\ufff6\011\ufff6\023\ufff6\001\002\000" +
-    "\006\020\042\021\041\001\002\000\006\015\121\017\122" +
-    "\001\002\000\006\015\uffd8\017\uffd8\001\002\000\006\020" +
-    "\042\021\041\001\002\000\004\014\123\001\002\000\016" +
-    "\002\ufff8\003\ufff8\004\ufff8\006\ufff8\011\ufff8\023\ufff8\001" +
-    "\002\000\006\015\uffd9\017\uffd9\001\002\000\006\015\ufff3" +
-    "\017\ufff3\001\002\000\006\020\042\021\041\001\002\000" +
-    "\006\015\121\017\130\001\002\000\004\014\131\001\002" +
-    "\000\016\002\ufff9\003\ufff9\004\ufff9\006\ufff9\011\ufff9\023" +
-    "\ufff9\001\002\000\016\002\ufff5\003\ufff5\004\ufff5\006\ufff5" +
-    "\011\ufff5\023\ufff5\001\002\000\004\002\001\001\002\000" +
-    "\004\022\135\001\002\000\004\016\136\001\002\000\004" +
-    "\022\137\001\002\000\012\031\152\032\151\033\147\034" +
-    "\150\001\002\000\006\015\142\017\143\001\002\000\006" +
-    "\015\uffdf\017\uffdf\001\002\000\004\022\137\001\002\000" +
-    "\004\014\144\001\002\000\016\002\ufffd\003\ufffd\004\ufffd" +
-    "\006\ufffd\011\ufffd\023\ufffd\001\002\000\006\015\uffe0\017" +
-    "\uffe0\001\002\000\006\015\uffde\017\uffde\001\002\000\006" +
-    "\015\uffdc\017\uffdc\001\002\000\004\016\156\001\002\000" +
-    "\004\016\153\001\002\000\006\015\uffdd\017\uffdd\001\002" +
-    "\000\004\020\154\001\002\000\004\017\155\001\002\000" +
-    "\006\015\uffdb\017\uffdb\001\002\000\004\020\157\001\002" +
-    "\000\004\015\160\001\002\000\004\020\161\001\002\000" +
-    "\004\017\162\001\002\000\006\015\uffda\017\uffda\001\002" +
-    "" });
+    "\000\163\000\014\003\006\004\004\007\007\012\012\024" +
+    "\011\001\002\000\006\005\134\006\135\001\002\000\004" +
+    "\002\133\001\002\000\020\002\ufff3\003\ufff3\004\ufff3\007" +
+    "\ufff3\012\ufff3\015\132\024\ufff3\001\002\000\004\010\073" +
+    "\001\002\000\016\002\ufffe\003\ufffe\004\ufffe\007\ufffe\012" +
+    "\ufffe\024\ufffe\001\002\000\004\023\056\001\002\000\010" +
+    "\014\016\023\015\036\017\001\002\000\016\002\000\003" +
+    "\006\004\004\007\007\012\012\024\011\001\002\000\016" +
+    "\002\uffff\003\uffff\004\uffff\007\uffff\012\uffff\024\uffff\001" +
+    "\002\000\016\013\uffea\015\uffea\016\uffea\020\uffea\037\uffea" +
+    "\040\054\001\002\000\004\013\uffed\001\002\000\004\017" +
+    "\051\001\002\000\004\013\025\001\002\000\006\013\uffe7" +
+    "\016\uffe7\001\002\000\006\013\uffeb\016\023\001\002\000" +
+    "\004\023\015\001\002\000\006\013\uffe8\016\uffe8\001\002" +
+    "\000\004\023\026\001\002\000\014\015\uffe2\023\046\027" +
+    "\uffe2\030\uffe2\031\047\001\002\000\006\015\uffe3\027\uffe3" +
+    "\001\002\000\006\015\032\027\031\001\002\000\004\023" +
+    "\026\001\002\000\016\002\ufffb\003\ufffb\004\ufffb\007\ufffb" +
+    "\012\ufffb\024\ufffb\001\002\000\004\030\034\001\002\000" +
+    "\004\017\035\001\002\000\004\023\015\001\002\000\004" +
+    "\037\041\001\002\000\004\020\040\001\002\000\006\015" +
+    "\uffe4\027\uffe4\001\002\000\010\021\043\022\042\023\015" +
+    "\001\002\000\012\015\uffd5\016\uffd5\020\uffd5\026\uffd5\001" +
+    "\002\000\012\015\uffd6\016\uffd6\020\uffd6\026\uffd6\001\002" +
+    "\000\006\015\uffe5\020\uffe5\001\002\000\006\015\uffe6\020" +
+    "\uffe6\001\002\000\010\015\uffe1\027\uffe1\030\uffe1\001\002" +
+    "\000\004\023\050\001\002\000\010\015\uffe0\027\uffe0\030" +
+    "\uffe0\001\002\000\004\014\052\001\002\000\004\020\053" +
+    "\001\002\000\004\013\uffec\001\002\000\004\023\055\001" +
+    "\002\000\014\013\uffe9\015\uffe9\016\uffe9\020\uffe9\037\uffe9" +
+    "\001\002\000\004\025\057\001\002\000\004\023\060\001" +
+    "\002\000\004\037\071\001\002\000\010\015\065\016\063" +
+    "\026\064\001\002\000\010\015\uffef\016\uffef\026\uffef\001" +
+    "\002\000\004\023\060\001\002\000\004\023\015\001\002" +
+    "\000\016\002\ufffa\003\ufffa\004\ufffa\007\ufffa\012\ufffa\024" +
+    "\ufffa\001\002\000\004\015\067\001\002\000\016\002\ufff9" +
+    "\003\ufff9\004\ufff9\007\ufff9\012\ufff9\024\ufff9\001\002\000" +
+    "\010\015\ufff0\016\ufff0\026\ufff0\001\002\000\006\021\043" +
+    "\022\042\001\002\000\010\015\uffee\016\uffee\026\uffee\001" +
+    "\002\000\004\023\074\001\002\000\010\011\075\012\077" +
+    "\017\076\001\002\000\004\017\126\001\002\000\004\023" +
+    "\104\001\002\000\010\014\016\023\015\036\017\001\002" +
+    "\000\004\013\101\001\002\000\004\023\026\001\002\000" +
+    "\006\015\103\027\031\001\002\000\016\002\ufff6\003\ufff6" +
+    "\004\ufff6\007\ufff6\012\ufff6\024\ufff6\001\002\000\006\016" +
+    "\ufff1\020\ufff1\001\002\000\006\016\106\020\107\001\002" +
+    "\000\004\023\125\001\002\000\006\011\110\012\111\001" +
+    "\002\000\004\017\116\001\002\000\010\014\016\023\015" +
+    "\036\017\001\002\000\004\013\113\001\002\000\004\023" +
+    "\026\001\002\000\006\015\115\027\031\001\002\000\016" +
+    "\002\ufff5\003\ufff5\004\ufff5\007\ufff5\012\ufff5\024\ufff5\001" +
+    "\002\000\006\021\043\022\042\001\002\000\006\016\121" +
+    "\020\122\001\002\000\006\016\uffd7\020\uffd7\001\002\000" +
+    "\006\021\043\022\042\001\002\000\004\015\123\001\002" +
+    "\000\016\002\ufff7\003\ufff7\004\ufff7\007\ufff7\012\ufff7\024" +
+    "\ufff7\001\002\000\006\016\uffd8\020\uffd8\001\002\000\006" +
+    "\016\ufff2\020\ufff2\001\002\000\006\021\043\022\042\001" +
+    "\002\000\006\016\121\020\130\001\002\000\004\015\131" +
+    "\001\002\000\016\002\ufff8\003\ufff8\004\ufff8\007\ufff8\012" +
+    "\ufff8\024\ufff8\001\002\000\016\002\ufff4\003\ufff4\004\ufff4" +
+    "\007\ufff4\012\ufff4\024\ufff4\001\002\000\004\002\001\001" +
+    "\002\000\004\023\164\001\002\000\004\023\136\001\002" +
+    "\000\004\017\137\001\002\000\004\023\140\001\002\000" +
+    "\012\032\153\033\151\034\150\035\152\001\002\000\006" +
+    "\016\143\020\144\001\002\000\006\016\uffde\020\uffde\001" +
+    "\002\000\004\023\140\001\002\000\004\015\145\001\002" +
+    "\000\016\002\ufffc\003\ufffc\004\ufffc\007\ufffc\012\ufffc\024" +
+    "\ufffc\001\002\000\006\016\uffdf\020\uffdf\001\002\000\006" +
+    "\016\uffdd\020\uffdd\001\002\000\006\016\uffdb\020\uffdb\001" +
+    "\002\000\004\017\161\001\002\000\004\017\154\001\002" +
+    "\000\006\016\uffdc\020\uffdc\001\002\000\004\021\155\001" +
+    "\002\000\004\016\156\001\002\000\004\021\157\001\002" +
+    "\000\004\020\160\001\002\000\006\016\uffd9\020\uffd9\001" +
+    "\002\000\004\021\162\001\002\000\004\020\163\001\002" +
+    "\000\006\016\uffda\020\uffda\001\002\000\004\015\165\001" +
+    "\002\000\016\002\ufffd\003\ufffd\004\ufffd\007\ufffd\012\ufffd" +
+    "\024\ufffd\001\002" });
 
   /** Access to parse-action table. */
   public short[][] action_table() {return _action_table;}
@@ -132,47 +137,48 @@ public class parser extends java_cup.runtime.lr_parser {
   /** <code>reduce_goto</code> table. */
   protected static final short[][] _reduce_table = 
     unpackFromStrings(new String[] {
-    "\000\160\000\010\002\004\003\011\004\007\001\001\000" +
+    "\000\163\000\010\002\004\003\012\004\007\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\002\001\001\000\002\001\001\000\004\004" +
-    "\054\001\001\000\010\013\017\017\016\020\020\001\001" +
+    "\001\001\000\002\001\001\000\002\001\001\000\010\013" +
+    "\017\017\020\020\021\001\001\000\004\004\013\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
-    "\002\001\001\000\002\001\001\000\002\001\001\000\004" +
-    "\017\022\001\001\000\002\001\001\000\006\014\026\015" +
-    "\025\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\004\015\031\001\001\000\002\001\001\000" +
-    "\002\001\001\000\002\001\001\000\006\016\035\017\034" +
-    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
-    "\001\000\006\005\042\017\043\001\001\000\002\001\001" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\004\017\023\001\001\000\002\001\001\000" +
+    "\006\014\027\015\026\001\001\000\002\001\001\000\002" +
+    "\001\001\000\002\001\001\000\004\015\032\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\006" +
+    "\016\036\017\035\001\001\000\002\001\001\000\002\001" +
+    "\001\000\002\001\001\000\006\005\043\017\044\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
     "\000\006\021\060\022\061\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\004\022\067\001\001" +
-    "\000\006\016\065\017\034\001\001\000\002\001\001\000" +
+    "\000\006\016\065\017\035\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\004" +
     "\005\071\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\004\012\104\001\001" +
-    "\000\010\013\077\017\016\020\020\001\001\000\002\001" +
-    "\001\000\006\014\101\015\025\001\001\000\002\001\001" +
+    "\000\010\013\077\017\020\020\021\001\001\000\002\001" +
+    "\001\000\006\014\101\015\026\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\010" +
-    "\013\111\017\016\020\020\001\001\000\002\001\001\000" +
-    "\006\014\113\015\025\001\001\000\002\001\001\000\002" +
+    "\013\111\017\020\020\021\001\001\000\002\001\001\000" +
+    "\006\014\113\015\026\001\001\000\002\001\001\000\002" +
     "\001\001\000\006\005\117\006\116\001\001\000\002\001" +
     "\001\000\002\001\001\000\004\005\123\001\001\000\002" +
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
     "\001\000\006\005\117\006\126\001\001\000\002\001\001" +
     "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
-    "\002\001\001\000\002\001\001\000\002\001\001\000\006" +
-    "\007\137\010\140\001\001\000\004\011\145\001\001\000" +
-    "\002\001\001\000\002\001\001\000\004\010\144\001\001" +
-    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\006\007\140\010\141\001\001\000\004\011" +
+    "\146\001\001\000\002\001\001\000\002\001\001\000\004" +
+    "\010\145\001\001\000\002\001\001\000\002\001\001\000" +
     "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
-    "\000\002\001\001\000\002\001\001\000\002\001\001" });
+    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001" });
 
   /** Access to <code>reduce_goto</code> table. */
   public short[][] reduce_table() {return _reduce_table;}
@@ -211,122 +217,154 @@ public class parser extends java_cup.runtime.lr_parser {
 
 
 
-
-    public boolean hayErrores = false;
-
+    
+        public boolean hayErrores = false;
+            private boolean salidaGenerada = false;
+                public final FileDatabase db = new FileDatabase();
+                
     public void report_fatal_error(String message, Object info) throws Exception {
-        report_error(message, info);
-        throw new Exception(message);
-    }
-
+            report_error(message, info);
+                    throw new Exception(message);
+                        }
+                        
     public void report_error(String message, Object info) {
-        // Se reporta manualmente en syntax_error para evitar ruido duplicado.
-    }
-
+            // Se reporta manualmente en syntax_error para evitar ruido duplicado.
+                }
+                
+    public void output(String message) {
+            System.out.println(message);
+                    salidaGenerada = true;
+                        }
+                        
+    public void outputRows(List<Map<String, String>> rows, List<String> fields) {
+            if (rows == null || rows.isEmpty()) {
+                        output("Resultado vacio");
+                                    return;
+                                            }
+                                            
+        List<String> columnNames = fields;
+                if (columnNames == null || columnNames.isEmpty()) {
+                            columnNames = new ArrayList<>(rows.get(0).keySet());
+                                    }
+                                    
+        output(String.join(",", columnNames));
+                for (Map<String, String> row : rows) {
+                            List<String> values = new ArrayList<>();
+                                        for (String column : columnNames) {
+                                                        values.add(row.getOrDefault(FileDatabase.normalizeColumnName(column), ""));
+                                                                    }
+                                                                                output(String.join(",", values));
+                                                                                        }
+                                                                                            }
+                                                                                            
+    public boolean hasOutput() {
+            return salidaGenerada;
+                }
+                
     private String nombreToken(int tokenId) {
-        if (tokenId >= 0 && tokenId < sym.terminalNames.length) {
-            return sym.terminalNames[tokenId];
-        }
-        return "TOKEN_" + tokenId;
-    }
-
+            if (tokenId >= 0 && tokenId < sym.terminalNames.length) {
+                        return sym.terminalNames[tokenId];
+                                }
+                                        return "TOKEN_" + tokenId;
+                                            }
+                                            
     private String textoToken(Symbol token) {
-        if (token == null || token.sym == sym.EOF) {
-            return "EOF";
-        }
-
+            if (token == null || token.sym == sym.EOF) {
+                        return "EOF";
+                                }
+                                
         if (Errors.tokenActual != null &&
-            Errors.tokenActual.sym == token.sym &&
-            Errors.tokenActual.line == token.left &&
-            Errors.tokenActual.column == token.right &&
-            Errors.tokenActual.lexema != null) {
-            return Errors.tokenActual.lexema;
-        }
-
+                    Errors.tokenActual.sym == token.sym &&
+                                Errors.tokenActual.line == token.left &&
+                                            Errors.tokenActual.column == token.right &&
+                                                        Errors.tokenActual.lexema != null) {
+                                                                    return Errors.tokenActual.lexema;
+                                                                            }
+                                                                            
         if (token.value != null) {
-            return token.value.toString();
-        }
-
+                    return token.value.toString();
+                            }
+                            
         return nombreToken(token.sym);
-    }
-
+            }
+            
     private boolean puedeCerrarElementoLista(int tokenId) {
-        switch (tokenId) {
-            case sym.ID:
-            case sym.INT:
-            case sym.DATETIME:
-            case sym.NUMBER:
-            case sym.STRING:
-            case sym.RPAREN:
-                return true;
-            default:
-                return false;
-        }
-    }
-
+            switch (tokenId) {
+                        case sym.ID:
+                                            case sym.INT:
+                                                                case sym.DATETIME:
+                                                                                    case sym.NUMBER:
+                                                                                                        case sym.STRING:
+                                                                                                                            case sym.RPAREN:
+                                                                                                                                                    return true;
+                                                                                                                                                                default:
+                                                                                                                                                                                        return false;
+                                                                                                                                                                                                }
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                    
     private boolean puedeIniciarElementoLista(int tokenId) {
-        switch (tokenId) {
-            case sym.ID:
-            case sym.NUMBER:
-            case sym.STRING:
-            case sym.CONTEO:
-            case sym.STAR:
-                return true;
-            default:
-                return false;
-        }
-    }
-
+            switch (tokenId) {
+                        case sym.ID:
+                                            case sym.NUMBER:
+                                                                case sym.STRING:
+                                                                                    case sym.CONTEO:
+                                                                                                        case sym.STAR:
+                                                                                                                                return true;
+                                                                                                                                            default:
+                                                                                                                                                                    return false;
+                                                                                                                                                                            }
+                                                                                                                                                                                }
+                                                                                                                                                                                
     private boolean faltaComa(Errors.TokenInfo previo, Symbol actual) {
-        if (previo == null || actual == null) {
-            return false;
-        }
-
+            if (previo == null || actual == null) {
+                        return false;
+                                }
+                                
         if (actual.sym == sym.EOF || actual.sym == sym.SEMI || actual.sym == sym.RPAREN) {
-            return false;
-        }
-
+                    return false;
+                            }
+                            
         return puedeCerrarElementoLista(previo.sym) && puedeIniciarElementoLista(actual.sym);
-    }
-
+            }
+            
     public void syntax_error(Symbol cur_token) {
-
+    
         hayErrores = true;
-        Errors.hayErrores = true;
-
+                Errors.hayErrores = true;
+                
         Errors.TokenInfo previo = Errors.ultimoToken;
-        String token = textoToken(cur_token);
-        int linea = cur_token.left > 0 ? cur_token.left : (Errors.tokenActual != null ? Errors.tokenActual.line : 1);
-        int columna = cur_token.right > 0 ? cur_token.right : (Errors.tokenActual != null ? Errors.tokenActual.column : 1);
-        String detalle;
-
+                String token = textoToken(cur_token);
+                        int linea = cur_token.left > 0 ? cur_token.left : (Errors.tokenActual != null ? Errors.tokenActual.line : 1);
+                                int columna = cur_token.right > 0 ? cur_token.right : (Errors.tokenActual != null ? Errors.tokenActual.column : 1);
+                                        String detalle;
+                                        
         if (cur_token.sym == sym.EOF) {
-            detalle = "Fin de archivo inesperado; posiblemente falta ';' al final de la sentencia";
-        } else if (Errors.hayErrorLexicoCercano(linea, columna)) {
-            detalle = "La sintaxis se rompio cerca de un error lexico previo";
-        } else if (previo != null && previo.sym == sym.RPAREN && cur_token.sym == sym.LPAREN) {
-            detalle = "Falta la palabra reservada VALUES antes de '('";
-        } else if (faltaComa(previo, cur_token)) {
-            detalle = "Falta una coma antes de '" + token + "'";
-        } else if (cur_token.sym == sym.SEMI) {
-            detalle = "La sentencia esta incompleta antes de ';'";
-        } else {
-            detalle = "Token inesperado '" + token + "'";
-        }
-
+                    detalle = "Fin de archivo inesperado; posiblemente falta ';' al final de la sentencia";
+                            } else if (Errors.hayErrorLexicoCercano(linea, columna)) {
+                                        detalle = "La sintaxis se rompio cerca de un error lexico previo";
+                                                } else if (previo != null && previo.sym == sym.RPAREN && cur_token.sym == sym.LPAREN) {
+                                                            detalle = "Falta la palabra reservada VALUES antes de '('";
+                                                                    } else if (faltaComa(previo, cur_token)) {
+                                                                                detalle = "Falta una coma antes de '" + token + "'";
+                                                                                        } else if (cur_token.sym == sym.SEMI) {
+                                                                                                    detalle = "La sentencia esta incompleta antes de ';'";
+                                                                                                            } else {
+                                                                                                                        detalle = "Token inesperado '" + token + "'";
+                                                                                                                                }
+                                                                                                                                
         String clave = "SINT:" + linea + ":" + columna + ":" + detalle;
-        if (!Errors.debeReportar(clave)) {
-            return;
-        }
-
+                if (!Errors.debeReportar(clave)) {
+                            return;
+                                    }
+                                    
         System.out.println(
-            "ERROR: Sintactico | linea: " + linea +
-            " | columna: " + columna +
-            " | token: " + token +
-            " | detalle: " + detalle
-        );
-    }
-
+                    "ERROR: Sintactico | linea: " + linea +
+                                " | columna: " + columna +
+                                            " | token: " + token +
+                                                        " | detalle: " + detalle
+                                                                );
+                                                                    }
+                                                                    
 
 
 /** Cup generated class to encapsulate user supplied action code.*/
@@ -395,79 +433,175 @@ class CUP$parser$actions {
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 4: // stmt ::= CREATE TABLE ID LPAREN column_list RPAREN SEMI 
+          case 4: // stmt ::= CREATE DATABASE ID SEMI 
             {
               Object RESULT =null;
-		 System.out.println("CREATE TABLE valido"); 
+		 
+                            try {
+                                            db.createDatabase($3);
+                                                            output("CREATE DATABASE ejecutado");
+                                                                        } catch (Exception e) {
+                                                                                        hayErrores = true;
+                                                                                                        Errors.hayErrores = true;
+                                                                                                                        output("ERROR: " + e.getMessage());
+                                                                                                                                    }
+                                                                                                                                            
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 5: // stmt ::= CREATE TABLE ID LPAREN column_list RPAREN SEMI 
+            {
+              Object RESULT =null;
+		 
+                                                                                                                                                                              try {
+                                                                                                                                                                                              db.createTable($3, $6);
+                                                                                                                                                                                                              output("CREATE TABLE ejecutado");
+                                                                                                                                                                                                                          } catch (Exception e) {
+                                                                                                                                                                                                                                          hayErrores = true;
+                                                                                                                                                                                                                                                          Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                          output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                                              
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 5: // stmt ::= SELECT select_list FROM table_ref SEMI 
+          case 6: // stmt ::= SELECT select_list FROM table_ref SEMI 
             {
               Object RESULT =null;
-		 System.out.println("SELECT valido"); 
+		 
+                                                                                                                                                                                                                                                                                                                                try {
+                                                                                                                                                                                                                                                                                                                                                if ($2.size() == 1 && "COUNT(*)".equalsIgnoreCase($2.get(0))) {
+                                                                                                                                                                                                                                                                                                                                                                    output("COUNT: " + db.selectCount($4, null));
+                                                                                                                                                                                                                                                                                                                                                                                    } else {
+                                                                                                                                                                                                                                                                                                                                                                                                        List<Map<String, String>> rows = db.select($2, $4, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                            outputRows(rows, $2);
+                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 6: // stmt ::= UPDATE ID SET assignments SEMI 
+          case 7: // stmt ::= UPDATE ID SET assignments SEMI 
             {
               Object RESULT =null;
-		 System.out.println("UPDATE valido"); 
+		 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              int count = db.update($2, $4, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              output("UPDATE ejecutado: " + count + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 7: // stmt ::= UPDATE ID SET assignments WHERE condition SEMI 
+          case 8: // stmt ::= UPDATE ID SET assignments WHERE condition SEMI 
             {
               Object RESULT =null;
-		 System.out.println("UPDATE con WHERE valido"); 
+		 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                int count = db.update($2, $4, $6);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                output("UPDATE ejecutado: " + count + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 8: // stmt ::= INSERT INTO ID VALUES LPAREN values_list RPAREN SEMI 
+          case 9: // stmt ::= INSERT INTO ID VALUES LPAREN values_list RPAREN SEMI 
             {
               Object RESULT =null;
-		 System.out.println("INSERT VALUES valido"); 
+		 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  db.insert($3, null, $6);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  output("INSERT ejecutado");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 9: // stmt ::= INSERT INTO ID LPAREN column_names RPAREN VALUES LPAREN values_list RPAREN SEMI 
+          case 10: // stmt ::= INSERT INTO ID LPAREN column_names RPAREN VALUES LPAREN values_list RPAREN SEMI 
             {
               Object RESULT =null;
-		 System.out.println("INSERT con columnas valido"); 
+		 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    db.insert($3, $5, $10);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    output("INSERT ejecutado");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 10: // stmt ::= INSERT INTO ID SELECT select_list FROM table_ref SEMI 
+          case 11: // stmt ::= INSERT INTO ID SELECT select_list FROM table_ref SEMI 
             {
               Object RESULT =null;
-		 System.out.println("INSERT SELECT valido"); 
+		 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      List<Map<String, String>> rows = db.select($5, $7, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      db.insertRows($3, null, rows);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      output("INSERT SELECT ejecutado: " + rows.size() + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 11: // stmt ::= INSERT INTO ID LPAREN column_names RPAREN SELECT select_list FROM table_ref SEMI 
+          case 12: // stmt ::= INSERT INTO ID LPAREN column_names RPAREN SELECT select_list FROM table_ref SEMI 
             {
               Object RESULT =null;
-		 System.out.println("INSERT SELECT con columnas valido"); 
+		 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        List<Map<String, String>> rows = db.select($7, $9, null);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        db.insertRows($3, $5, rows);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        output("INSERT SELECT ejecutado: " + rows.size() + " filas");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } catch (Exception e) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Errors.hayErrores = true;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    output("ERROR: " + e.getMessage());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("stmt",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 12: // stmt ::= error SEMI 
+          case 13: // stmt ::= error SEMI 
             {
               Object RESULT =null;
 		 hayErrores = true; 
@@ -476,7 +610,7 @@ class CUP$parser$actions {
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 13: // stmt ::= error 
+          case 14: // stmt ::= error 
             {
               Object RESULT =null;
 		 hayErrores = true; 
@@ -485,271 +619,317 @@ class CUP$parser$actions {
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 14: // column_names ::= column_names COMMA ID 
+          case 15: // column_names ::= column_names COMMA ID 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		
+                                          $1.add($3);
+                                                             RESULT = $1;
+                                                                            
               CUP$parser$result = parser.getSymbolFactory().newSymbol("column_names",8, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 15: // column_names ::= ID 
+          case 16: // column_names ::= ID 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                                                                                                                     List<String> cols = new ArrayList<>();
+                                                                                                                                                        cols.add($1);
+                                                                                                                                                                           RESULT = cols;
+                                                                                                                                                                                          
               CUP$parser$result = parser.getSymbolFactory().newSymbol("column_names",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 16: // assignments ::= assignments COMMA assignment 
+          case 17: // assignments ::= assignments COMMA assignment 
             {
-              Object RESULT =null;
-
+              java.util.Map<String,String> RESULT =null;
+		 
+                                        $1.putAll($3);
+                                                          RESULT = $1;
+                                                                        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("assignments",15, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 17: // assignments ::= assignment 
+          case 18: // assignments ::= assignment 
             {
-              Object RESULT =null;
-
+              java.util.Map<String,String> RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("assignments",15, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 18: // assignment ::= ID EQUALS value 
+          case 19: // assignment ::= ID EQUALS value 
             {
-              Object RESULT =null;
-
+              java.util.Map<String,String> RESULT =null;
+		 
+                                        Map<String, String> map = new LinkedHashMap<>();
+                                                          map.put($1, $3);
+                                                                            RESULT = map;
+                                                                                          
               CUP$parser$result = parser.getSymbolFactory().newSymbol("assignment",16, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 19: // select_list ::= STAR 
+          case 20: // select_list ::= STAR 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                        List<String> list = new ArrayList<>();
+                                                          list.add("*");
+                                                                            RESULT = list;
+                                                                                          
               CUP$parser$result = parser.getSymbolFactory().newSymbol("select_list",9, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 20: // select_list ::= CONTEO LPAREN STAR RPAREN 
+          case 21: // select_list ::= CONTEO LPAREN STAR RPAREN 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                                                                                                                                List<String> list = new ArrayList<>();
+                                                                                                                                                                  list.add("COUNT(*)");
+                                                                                                                                                                                    RESULT = list;
+                                                                                                                                                                                                  
               CUP$parser$result = parser.getSymbolFactory().newSymbol("select_list",9, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 21: // select_list ::= field_list 
+          case 22: // select_list ::= field_list 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("select_list",9, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 22: // field ::= ID 
+          case 23: // field ::= ID 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("field",13, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 23: // field ::= ID DOT ID 
+          case 24: // field ::= ID DOT ID 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1 + "." + $3; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("field",13, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 24: // field_list ::= field_list COMMA field 
+          case 25: // field_list ::= field_list COMMA field 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                      $1.add($3);
+                                                       RESULT = $1;
+                                                                    
               CUP$parser$result = parser.getSymbolFactory().newSymbol("field_list",14, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 25: // field_list ::= field 
+          case 26: // field_list ::= field 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                                                                                                       List<String> fields = new ArrayList<>();
+                                                                                                                                        fields.add($1);
+                                                                                                                                                         RESULT = fields;
+                                                                                                                                                                      
               CUP$parser$result = parser.getSymbolFactory().newSymbol("field_list",14, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 26: // condition ::= field EQUALS field 
+          case 27: // condition ::= field EQUALS field 
             {
-              Object RESULT =null;
-
+              FileDatabase.Condition RESULT =null;
+		 RESULT = new FileDatabase.Condition($1, $3, true); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("condition",12, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 27: // condition ::= field EQUALS value 
+          case 28: // condition ::= field EQUALS value 
             {
-              Object RESULT =null;
-
+              FileDatabase.Condition RESULT =null;
+		 RESULT = new FileDatabase.Condition($1, $3, false); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("condition",12, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 28: // table_ref ::= table_ref JOIN table_factor ON LPAREN condition RPAREN 
+          case 29: // table_ref ::= table_ref JOIN table_factor ON LPAREN condition RPAREN 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 throw new RuntimeException("JOIN no soportado"); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("table_ref",10, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 29: // table_ref ::= table_factor 
+          case 30: // table_ref ::= table_factor 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("table_ref",10, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 30: // table_factor ::= ID 
+          case 31: // table_factor ::= ID 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("table_factor",11, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 31: // table_factor ::= ID ID 
+          case 32: // table_factor ::= ID ID 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("table_factor",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 32: // table_factor ::= ID AS ID 
+          case 33: // table_factor ::= ID AS ID 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("table_factor",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 33: // column_list ::= column_list COMMA column 
+          case 34: // column_list ::= column_list COMMA column 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                        $1.add($3);
+                                                          RESULT = $1;
+                                                                        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("column_list",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 34: // column_list ::= column 
+          case 35: // column_list ::= column 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                                                                                                              List<String> cols = new ArrayList<>();
+                                                                                                                                                cols.add($1);
+                                                                                                                                                                  RESULT = cols;
+                                                                                                                                                                                
               CUP$parser$result = parser.getSymbolFactory().newSymbol("column_list",5, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 35: // column ::= ID type 
+          case 36: // column ::= ID type 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("column",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 36: // type ::= INT 
+          case 37: // type ::= INT 
             {
-              Object RESULT =null;
+              java.lang.String RESULT =null;
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("type",7, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 37: // type ::= DATETIME 
+          case 38: // type ::= DATETIME 
             {
-              Object RESULT =null;
+              java.lang.String RESULT =null;
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("type",7, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 38: // type ::= VARCHAR LPAREN NUMBER RPAREN 
+          case 39: // type ::= VARCHAR LPAREN NUMBER RPAREN 
             {
-              Object RESULT =null;
+              java.lang.String RESULT =null;
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("type",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 39: // type ::= DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN 
+          case 40: // type ::= DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN 
             {
-              Object RESULT =null;
+              java.lang.String RESULT =null;
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("type",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 40: // values_list ::= values_list COMMA value 
+          case 41: // values_list ::= values_list COMMA value 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                        $1.add($3);
+                                                          RESULT = $1;
+                                                                        
               CUP$parser$result = parser.getSymbolFactory().newSymbol("values_list",4, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 41: // values_list ::= value 
+          case 42: // values_list ::= value 
             {
-              Object RESULT =null;
-
+              java.util.List<String> RESULT =null;
+		 
+                                                                                                                              List<String> values = new ArrayList<>();
+                                                                                                                                                values.add($1);
+                                                                                                                                                                  RESULT = values;
+                                                                                                                                                                                
               CUP$parser$result = parser.getSymbolFactory().newSymbol("values_list",4, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 42: // value ::= NUMBER 
+          case 43: // value ::= NUMBER 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 RESULT = $1.toString(); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("value",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 43: // value ::= STRING 
+          case 44: // value ::= STRING 
             {
-              Object RESULT =null;
-
+              java.lang.String RESULT =null;
+		 
+                                            String text = $1.toString();
+                                                        RESULT = text.length() >= 2 ? text.substring(1, text.length() - 1) : text;
+                                                                
               CUP$parser$result = parser.getSymbolFactory().newSymbol("value",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
