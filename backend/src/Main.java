@@ -1,10 +1,11 @@
 import java.io.*;
-import java_cup.runtime.Symbol;
 
 public class Main {
     public static void main(String[] args) {
 
         try {
+            Errors.reiniciar();
+
             Reader reader;
 
             if (args.length > 0) {
@@ -18,7 +19,7 @@ public class Main {
 
             p.parse();
 
-            if (!Errors.hayErrores) {
+            if (!Errors.hayErrores && !p.hayErrores) {
                 System.out.println("OK");
             }
 

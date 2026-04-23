@@ -1,6 +1,28 @@
 %%
 %{
     public boolean hayErrores = false;
+
+    private java_cup.runtime.Symbol symbol(int type) {
+        return symbol(type, yytext());
+    }
+
+    private java_cup.runtime.Symbol symbol(int type, Object value) {
+        Errors.registrarToken(type, yyline + 1, yycolumn + 1, yytext());
+        return new java_cup.runtime.Symbol(type, yyline + 1, yycolumn + 1, value);
+    }
+
+    private java_cup.runtime.Symbol eofSymbol() {
+        int line = yyline + 1;
+        int column = yycolumn + 1;
+
+        if (Errors.tokenActual != null) {
+            line = Errors.tokenActual.line;
+            column = Errors.columnaFinal(Errors.tokenActual) + 1;
+        }
+
+        Errors.registrarToken(sym.EOF, line, column, "EOF");
+        return new java_cup.runtime.Symbol(sym.EOF, line, column, null);
+    }
 %}
 %class Lexer
 %unicode
@@ -8,6 +30,9 @@
 %line
 %column
 %ignorecase
+%eofval{
+    return eofSymbol();
+%eofval}
 
 WHITESPACE = [ \t\r\n]+
 DIGIT      = [0-9]
@@ -19,46 +44,51 @@ STRING     = \'[^\']*\'
 
 {WHITESPACE}          { /* ignorar espacios */ }
 
-"CREATE"  { return new java_cup.runtime.Symbol(sym.CREATE, yyline+1, yycolumn+1); }
-"TABLE"   { return new java_cup.runtime.Symbol(sym.TABLE, yyline+1, yycolumn+1); }
-"INSERT"  { return new java_cup.runtime.Symbol(sym.INSERT, yyline+1, yycolumn+1); }
-"INTO"    { return new java_cup.runtime.Symbol(sym.INTO, yyline+1, yycolumn+1); }
-"VALUES"  { return new java_cup.runtime.Symbol(sym.VALUES, yyline+1, yycolumn+1); }
-"SELECT"  { return new java_cup.runtime.Symbol(sym.SELECT, yyline+1, yycolumn+1); }
-"FROM"    { return new java_cup.runtime.Symbol(sym.FROM, yyline+1, yycolumn+1); }
-"*"       { return new java_cup.runtime.Symbol(sym.STAR, yyline+1, yycolumn+1); }
-";"       { return new java_cup.runtime.Symbol(sym.SEMI, yyline+1, yycolumn+1); }
-","       { return new java_cup.runtime.Symbol(sym.COMMA, yyline+1, yycolumn+1); }
-"("       { return new java_cup.runtime.Symbol(sym.LPAREN, yyline+1, yycolumn+1); }
-")"       { return new java_cup.runtime.Symbol(sym.RPAREN, yyline+1, yycolumn+1); }
+"CREATE"  { return symbol(sym.CREATE); }
+"TABLE"   { return symbol(sym.TABLE); }
+"INSERT"  { return symbol(sym.INSERT); }
+"INTO"    { return symbol(sym.INTO); }
+"VALUES"  { return symbol(sym.VALUES); }
+"SELECT"  { return symbol(sym.SELECT); }
+"FROM"    { return symbol(sym.FROM); }
+"*"       { return symbol(sym.STAR); }
+";"       { return symbol(sym.SEMI); }
+","       { return symbol(sym.COMMA); }
+"("       { return symbol(sym.LPAREN); }
+")"       { return symbol(sym.RPAREN); }
 
-"UPDATE"  { return new java_cup.runtime.Symbol(sym.UPDATE, yyline+1, yycolumn+1); }
-"SET"     { return new java_cup.runtime.Symbol(sym.SET, yyline+1, yycolumn+1); }
-"WHERE"   { return new java_cup.runtime.Symbol(sym.WHERE, yyline+1, yycolumn+1); }
-"JOIN"    { return new java_cup.runtime.Symbol(sym.JOIN, yyline+1, yycolumn+1); }
-"ON"      { return new java_cup.runtime.Symbol(sym.ON, yyline+1, yycolumn+1); }
-"AS"      { return new java_cup.runtime.Symbol(sym.AS, yyline+1, yycolumn+1); }
+"UPDATE"  { return symbol(sym.UPDATE); }
+"SET"     { return symbol(sym.SET); }
+"WHERE"   { return symbol(sym.WHERE); }
+"JOIN"    { return symbol(sym.JOIN); }
+"ON"      { return symbol(sym.ON); }
+"AS"      { return symbol(sym.AS); }
 
-"INT"      { return new java_cup.runtime.Symbol(sym.INT, yyline+1, yycolumn+1); }
-"VARCHAR"  { return new java_cup.runtime.Symbol(sym.VARCHAR, yyline+1, yycolumn+1); }
-"DATETIME" { return new java_cup.runtime.Symbol(sym.DATETIME, yyline+1, yycolumn+1); }
-"DECIMAL"  { return new java_cup.runtime.Symbol(sym.DECIMAL, yyline+1, yycolumn+1); }
+"INT"      { return symbol(sym.INT); }
+"VARCHAR"  { return symbol(sym.VARCHAR); }
+"DATETIME" { return symbol(sym.DATETIME); }
+"DECIMAL"  { return symbol(sym.DECIMAL); }
 
-"conteo"  { return new java_cup.runtime.Symbol(sym.CONTEO, yyline+1, yycolumn+1); }
+"conteo"  { return symbol(sym.CONTEO); }
 
-"="  { return new java_cup.runtime.Symbol(sym.EQUALS, yyline+1, yycolumn+1); }
-"."  { return new java_cup.runtime.Symbol(sym.DOT, yyline+1, yycolumn+1); }
+"="  { return symbol(sym.EQUALS); }
+"."  { return symbol(sym.DOT); }
 
-{DECIMAL_NUM} { return new java_cup.runtime.Symbol(sym.NUMBER, yyline+1, yycolumn+1, Double.valueOf(yytext())); }
-{DIGIT}+      { return new java_cup.runtime.Symbol(sym.NUMBER, yyline+1, yycolumn+1, Integer.valueOf(yytext())); }
-{STRING}      { return new java_cup.runtime.Symbol(sym.STRING, yyline+1, yycolumn+1, yytext()); }
-{ID}          { return new java_cup.runtime.Symbol(sym.ID, yyline+1, yycolumn+1, yytext()); }
+{DECIMAL_NUM} { return symbol(sym.NUMBER, Double.valueOf(yytext())); }
+{DIGIT}+      { return symbol(sym.NUMBER, Double.valueOf(yytext())); }
+{STRING}      { return symbol(sym.STRING, yytext()); }
+{ID}          { return symbol(sym.ID, yytext()); }
 
 . { 
-    Errors.hayErrores = true;
-    System.out.println(
-        "ERROR: Lexico | linea: " + (yyline+1) + 
-        " columna: " + (yycolumn+1) + 
-        " valor: '" + yytext() + "'"
-    ); 
+    Errors.registrarErrorLexico(yyline + 1, yycolumn + 1, yytext());
+    String clave = "LEX:" + (yyline + 1) + ":" + (yycolumn + 1) + ":" + yytext();
+
+    if (Errors.debeReportar(clave)) {
+        System.out.println(
+            "ERROR: Lexico | linea: " + (yyline + 1) +
+            " | columna: " + (yycolumn + 1) +
+            " | valor: '" + yytext() + "'" +
+            " | detalle: Caracter no reconocido"
+        );
+    }
 }

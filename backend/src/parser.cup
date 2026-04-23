@@ -4,28 +4,116 @@ parser code {:
 
     public boolean hayErrores = false;
 
-    public void report_fatal_error(String message, Object info) {
+    public void report_fatal_error(String message, Object info) throws Exception {
         report_error(message, info);
+        throw new Exception(message);
+    }
+
+    public void report_error(String message, Object info) {
+        // Se reporta manualmente en syntax_error para evitar ruido duplicado.
+    }
+
+    private String nombreToken(int tokenId) {
+        if (tokenId >= 0 && tokenId < sym.terminalNames.length) {
+            return sym.terminalNames[tokenId];
+        }
+        return "TOKEN_" + tokenId;
+    }
+
+    private String textoToken(Symbol token) {
+        if (token == null || token.sym == sym.EOF) {
+            return "EOF";
+        }
+
+        if (Errors.tokenActual != null &&
+            Errors.tokenActual.sym == token.sym &&
+            Errors.tokenActual.line == token.left &&
+            Errors.tokenActual.column == token.right &&
+            Errors.tokenActual.lexema != null) {
+            return Errors.tokenActual.lexema;
+        }
+
+        if (token.value != null) {
+            return token.value.toString();
+        }
+
+        return nombreToken(token.sym);
+    }
+
+    private boolean puedeCerrarElementoLista(int tokenId) {
+        switch (tokenId) {
+            case sym.ID:
+            case sym.INT:
+            case sym.DATETIME:
+            case sym.NUMBER:
+            case sym.STRING:
+            case sym.RPAREN:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean puedeIniciarElementoLista(int tokenId) {
+        switch (tokenId) {
+            case sym.ID:
+            case sym.NUMBER:
+            case sym.STRING:
+            case sym.CONTEO:
+            case sym.STAR:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean faltaComa(Errors.TokenInfo previo, Symbol actual) {
+        if (previo == null || actual == null) {
+            return false;
+        }
+
+        if (actual.sym == sym.EOF || actual.sym == sym.SEMI || actual.sym == sym.RPAREN) {
+            return false;
+        }
+
+        return puedeCerrarElementoLista(previo.sym) && puedeIniciarElementoLista(actual.sym);
     }
 
     public void syntax_error(Symbol cur_token) {
 
         hayErrores = true;
+        Errors.hayErrores = true;
 
-        String token;
+        Errors.TokenInfo previo = Errors.ultimoToken;
+        String token = textoToken(cur_token);
+        int linea = cur_token.left > 0 ? cur_token.left : (Errors.tokenActual != null ? Errors.tokenActual.line : 1);
+        int columna = cur_token.right > 0 ? cur_token.right : (Errors.tokenActual != null ? Errors.tokenActual.column : 1);
+        String detalle;
 
         if (cur_token.sym == sym.EOF) {
-            token = "EOF (posible falta de ';')";
+            detalle = "Fin de archivo inesperado; posiblemente falta ';' al final de la sentencia";
+        } else if (Errors.hayErrorLexicoCercano(linea, columna)) {
+            detalle = "La sintaxis se rompio cerca de un error lexico previo";
+        } else if (previo != null && previo.sym == sym.RPAREN && cur_token.sym == sym.LPAREN) {
+            detalle = "Falta la palabra reservada VALUES antes de '('";
+        } else if (faltaComa(previo, cur_token)) {
+            detalle = "Falta una coma antes de '" + token + "'";
+        } else if (cur_token.sym == sym.SEMI) {
+            detalle = "La sentencia esta incompleta antes de ';'";
         } else {
-            token = (cur_token.value != null)
-                ? cur_token.value.toString()
-                : sym.terminalNames[cur_token.sym];
+            detalle = "Token inesperado '" + token + "'";
+        }
+
+        String clave = "SINT:" + linea + ":" + columna + ":" + detalle;
+        if (!Errors.debeReportar(clave)) {
+            return;
         }
 
         System.out.println(
-            "ERROR: Sintactico | linea: " + cur_token.left +
-            " columna: " + cur_token.right +
-            " token: " + token
+            "ERROR: Sintactico | linea: " + linea +
+            " | columna: " + columna +
+            " | token: " + token +
+            " | detalle: " + detalle
         );
     }
 

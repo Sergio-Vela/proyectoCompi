@@ -98,13 +98,13 @@ class Lexer implements java_cup.runtime.Scanner {
   private static final String ZZ_ACTION_PACKED_0 =
     "\1\0\1\1\1\2\1\1\1\3\1\4\1\5\1\6"+
     "\1\7\1\10\1\11\1\12\15\13\2\1\1\0\1\14"+
-    "\1\0\2\15\7\13\1\16\5\13\2\0\1\17\6\13"+
-    "\1\20\1\0\1\13\1\0\1\13\1\21\5\13\1\20"+
-    "\1\0\1\21\4\13\1\0\1\22\1\13\1\23\1\0"+
-    "\2\24\6\13\1\23\1\0\4\13\1\0\1\13\1\0"+
-    "\1\13\1\25\3\13\1\26\1\0\1\27\1\30\1\13"+
-    "\1\0\1\13\1\0\2\31\1\32\1\33\2\34\1\13"+
-    "\1\32\1\13\1\0\2\35\1\36\2\37";
+    "\1\0\2\15\7\13\1\16\5\13\2\0\1\10\6\13"+
+    "\1\17\1\0\1\13\1\0\1\13\1\20\5\13\1\17"+
+    "\1\0\1\20\4\13\1\0\1\21\1\13\1\22\1\0"+
+    "\2\23\6\13\1\22\1\0\4\13\1\0\1\13\1\0"+
+    "\1\13\1\24\3\13\1\25\1\0\1\26\1\27\1\13"+
+    "\1\0\1\13\1\0\2\30\1\31\1\32\2\33\1\13"+
+    "\1\31\1\13\1\0\2\34\1\35\2\36";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[122];
@@ -364,6 +364,28 @@ class Lexer implements java_cup.runtime.Scanner {
 
   /* user code: */
     public boolean hayErrores = false;
+
+    private java_cup.runtime.Symbol symbol(int type) {
+        return symbol(type, yytext());
+    }
+
+    private java_cup.runtime.Symbol symbol(int type, Object value) {
+        Errors.registrarToken(type, yyline + 1, yycolumn + 1, yytext());
+        return new java_cup.runtime.Symbol(type, yyline + 1, yycolumn + 1, value);
+    }
+
+    private java_cup.runtime.Symbol eofSymbol() {
+        int line = yyline + 1;
+        int column = yycolumn + 1;
+
+        if (Errors.tokenActual != null) {
+            line = Errors.tokenActual.line;
+            column = Errors.columnaFinal(Errors.tokenActual) + 1;
+        }
+
+        Errors.registrarToken(sym.EOF, line, column, "EOF");
+        return new java_cup.runtime.Symbol(sym.EOF, line, column, null);
+    }
 
 
   /**
@@ -785,170 +807,171 @@ class Lexer implements java_cup.runtime.Scanner {
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
             zzDoEOF();
-          { return new java_cup.runtime.Symbol(sym.EOF); }
+          {     return eofSymbol();
+ }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { Errors.hayErrores = true;
-    System.out.println(
-        "ERROR: Lexico | linea: " + (yyline+1) + 
-        " columna: " + (yycolumn+1) + 
-        " valor: '" + yytext() + "'"
-    );
+            { Errors.registrarErrorLexico(yyline + 1, yycolumn + 1, yytext());
+    String clave = "LEX:" + (yyline + 1) + ":" + (yycolumn + 1) + ":" + yytext();
+
+    if (Errors.debeReportar(clave)) {
+        System.out.println(
+            "ERROR: Lexico | linea: " + (yyline + 1) +
+            " | columna: " + (yycolumn + 1) +
+            " | valor: '" + yytext() + "'" +
+            " | detalle: Caracter no reconocido"
+        );
+    }
             }
           // fall through
-          case 32: break;
+          case 31: break;
           case 2:
             { /* ignorar espacios */
             }
           // fall through
-          case 33: break;
+          case 32: break;
           case 3:
-            { return new java_cup.runtime.Symbol(sym.LPAREN, yyline+1, yycolumn+1);
+            { return symbol(sym.LPAREN);
+            }
+          // fall through
+          case 33: break;
+          case 4:
+            { return symbol(sym.RPAREN);
             }
           // fall through
           case 34: break;
-          case 4:
-            { return new java_cup.runtime.Symbol(sym.RPAREN, yyline+1, yycolumn+1);
+          case 5:
+            { return symbol(sym.STAR);
             }
           // fall through
           case 35: break;
-          case 5:
-            { return new java_cup.runtime.Symbol(sym.STAR, yyline+1, yycolumn+1);
+          case 6:
+            { return symbol(sym.COMMA);
             }
           // fall through
           case 36: break;
-          case 6:
-            { return new java_cup.runtime.Symbol(sym.COMMA, yyline+1, yycolumn+1);
+          case 7:
+            { return symbol(sym.DOT);
             }
           // fall through
           case 37: break;
-          case 7:
-            { return new java_cup.runtime.Symbol(sym.DOT, yyline+1, yycolumn+1);
+          case 8:
+            { return symbol(sym.NUMBER, Double.valueOf(yytext()));
             }
           // fall through
           case 38: break;
-          case 8:
-            { return new java_cup.runtime.Symbol(sym.NUMBER, yyline+1, yycolumn+1, Integer.valueOf(yytext()));
+          case 9:
+            { return symbol(sym.SEMI);
             }
           // fall through
           case 39: break;
-          case 9:
-            { return new java_cup.runtime.Symbol(sym.SEMI, yyline+1, yycolumn+1);
+          case 10:
+            { return symbol(sym.EQUALS);
             }
           // fall through
           case 40: break;
-          case 10:
-            { return new java_cup.runtime.Symbol(sym.EQUALS, yyline+1, yycolumn+1);
+          case 11:
+            { return symbol(sym.ID, yytext());
             }
           // fall through
           case 41: break;
-          case 11:
-            { return new java_cup.runtime.Symbol(sym.ID, yyline+1, yycolumn+1, yytext());
+          case 12:
+            { return symbol(sym.STRING, yytext());
             }
           // fall through
           case 42: break;
-          case 12:
-            { return new java_cup.runtime.Symbol(sym.STRING, yyline+1, yycolumn+1, yytext());
+          case 13:
+            { return symbol(sym.AS);
             }
           // fall through
           case 43: break;
-          case 13:
-            { return new java_cup.runtime.Symbol(sym.AS, yyline+1, yycolumn+1);
+          case 14:
+            { return symbol(sym.ON);
             }
           // fall through
           case 44: break;
-          case 14:
-            { return new java_cup.runtime.Symbol(sym.ON, yyline+1, yycolumn+1);
+          case 15:
+            { return symbol(sym.INT);
             }
           // fall through
           case 45: break;
-          case 15:
-            { return new java_cup.runtime.Symbol(sym.NUMBER, yyline+1, yycolumn+1, Double.valueOf(yytext()));
+          case 16:
+            { return symbol(sym.SET);
             }
           // fall through
           case 46: break;
-          case 16:
-            { return new java_cup.runtime.Symbol(sym.INT, yyline+1, yycolumn+1);
+          case 17:
+            { return symbol(sym.FROM);
             }
           // fall through
           case 47: break;
-          case 17:
-            { return new java_cup.runtime.Symbol(sym.SET, yyline+1, yycolumn+1);
+          case 18:
+            { return symbol(sym.INTO);
             }
           // fall through
           case 48: break;
-          case 18:
-            { return new java_cup.runtime.Symbol(sym.FROM, yyline+1, yycolumn+1);
+          case 19:
+            { return symbol(sym.JOIN);
             }
           // fall through
           case 49: break;
-          case 19:
-            { return new java_cup.runtime.Symbol(sym.INTO, yyline+1, yycolumn+1);
+          case 20:
+            { return symbol(sym.TABLE);
             }
           // fall through
           case 50: break;
-          case 20:
-            { return new java_cup.runtime.Symbol(sym.JOIN, yyline+1, yycolumn+1);
+          case 21:
+            { return symbol(sym.WHERE);
             }
           // fall through
           case 51: break;
-          case 21:
-            { return new java_cup.runtime.Symbol(sym.TABLE, yyline+1, yycolumn+1);
+          case 22:
+            { return symbol(sym.CONTEO);
             }
           // fall through
           case 52: break;
-          case 22:
-            { return new java_cup.runtime.Symbol(sym.WHERE, yyline+1, yycolumn+1);
+          case 23:
+            { return symbol(sym.CREATE);
             }
           // fall through
           case 53: break;
-          case 23:
-            { return new java_cup.runtime.Symbol(sym.CONTEO, yyline+1, yycolumn+1);
+          case 24:
+            { return symbol(sym.INSERT);
             }
           // fall through
           case 54: break;
-          case 24:
-            { return new java_cup.runtime.Symbol(sym.CREATE, yyline+1, yycolumn+1);
+          case 25:
+            { return symbol(sym.SELECT);
             }
           // fall through
           case 55: break;
-          case 25:
-            { return new java_cup.runtime.Symbol(sym.INSERT, yyline+1, yycolumn+1);
+          case 26:
+            { return symbol(sym.UPDATE);
             }
           // fall through
           case 56: break;
-          case 26:
-            { return new java_cup.runtime.Symbol(sym.SELECT, yyline+1, yycolumn+1);
+          case 27:
+            { return symbol(sym.VALUES);
             }
           // fall through
           case 57: break;
-          case 27:
-            { return new java_cup.runtime.Symbol(sym.UPDATE, yyline+1, yycolumn+1);
+          case 28:
+            { return symbol(sym.DECIMAL);
             }
           // fall through
           case 58: break;
-          case 28:
-            { return new java_cup.runtime.Symbol(sym.VALUES, yyline+1, yycolumn+1);
+          case 29:
+            { return symbol(sym.VARCHAR);
             }
           // fall through
           case 59: break;
-          case 29:
-            { return new java_cup.runtime.Symbol(sym.DECIMAL, yyline+1, yycolumn+1);
+          case 30:
+            { return symbol(sym.DATETIME);
             }
           // fall through
           case 60: break;
-          case 30:
-            { return new java_cup.runtime.Symbol(sym.VARCHAR, yyline+1, yycolumn+1);
-            }
-          // fall through
-          case 61: break;
-          case 31:
-            { return new java_cup.runtime.Symbol(sym.DATETIME, yyline+1, yycolumn+1);
-            }
-          // fall through
-          case 62: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-
     document.getElementById("btnEjecutar").addEventListener("click", function () {
-
         const operacion = document.getElementById("inputOperacion").value;
 
         fetch("../backend/analizar.php", {
@@ -12,13 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
             body: "operacion=" + encodeURIComponent(operacion)
         })
             .then(res => res.text())
-            .then(data => manejarRespuesta(data));
-
+            .then(data => manejarRespuesta(data))
+            .catch(error => mostrarErrorDeConexion(error));
     });
 
-
     document.getElementById("btnSubir").addEventListener("click", function () {
-
         const archivo = document.getElementById("archivoSQL").files[0];
 
         if (!archivo) {
@@ -34,38 +30,31 @@ document.addEventListener("DOMContentLoaded", () => {
             body: formData
         })
             .then(res => res.text())
-            .then(data => manejarRespuesta(data));
-
+            .then(data => manejarRespuesta(data))
+            .catch(error => mostrarErrorDeConexion(error));
     });
-
 });
 
-
 function manejarRespuesta(data) {
-
     console.log("RESPUESTA BACKEND:\n", data);
 
     const textarea = document.getElementById("resultado");
     const tabla = document.querySelector("#tablaErrores tbody");
 
     if (!tabla) {
-        console.error("No se encontró tbody");
+        console.error("No se encontro tbody");
         return;
     }
 
-    textarea.value = "";
+    textarea.value = data;
     tabla.innerHTML = "";
 
     if (data.includes("ERROR:")) {
         llenarTablaErrores(data);
-    } else {
-        textarea.value = data;
     }
 }
 
-
 function llenarTablaErrores(texto) {
-
     const tabla = document.getElementById("tbodyErrores");
 
     if (!tabla) {
@@ -76,56 +65,71 @@ function llenarTablaErrores(texto) {
     tabla.innerHTML = "";
 
     const lineas = texto.split("\n");
-
     let contador = 1;
 
     lineas.forEach(linea => {
-
         linea = linea.trim();
 
-        if (!linea.startsWith("ERROR:")) return;
+        if (!linea.startsWith("ERROR:")) {
+            return;
+        }
 
         let tipo = "";
         let fila = "-";
         let columna = "-";
         let valor = "-";
+        let detalle = "";
 
         if (linea.includes("Lexico")) {
             tipo = "Error Léxico";
 
-            const match = linea.match(/linea:\s*(\d+).*columna:\s*(\d+).*valor:\s*'(.+)'/);
+            const match = linea.match(/linea:\s*(\d+)\s*\|\s*columna:\s*(\d+)\s*\|\s*valor:\s*'([^']*)'(?:\s*\|\s*detalle:\s*(.+))?/);
 
             if (match) {
                 fila = match[1];
                 columna = match[2];
                 valor = match[3];
+                detalle = match[4] || "Caracter no reconocido";
             }
         }
 
         if (linea.includes("Sintactico") && !linea.includes("recuperado")) {
             tipo = "Error Sintáctico";
 
-            const match = linea.match(/linea:\s*(\d+).*columna:\s*(\d+).*token:\s*(.+)/);
+            const match = linea.match(/linea:\s*(\d+)\s*\|\s*columna:\s*(\d+)\s*\|\s*token:\s*(.*?)\s*\|\s*detalle:\s*(.+)/);
 
             if (match) {
                 fila = match[1];
                 columna = match[2];
                 valor = match[3];
+                detalle = match[4];
             }
         }
 
         const row = document.createElement("tr");
-
         row.innerHTML = `
             <td>${contador++}</td>
             <td>${fila}</td>
             <td>${columna}</td>
             <td>${valor}</td>
-            <td>${tipo}</td>
+            <td>${detalle ? `${tipo}: ${detalle}` : tipo}</td>
         `;
 
         tabla.appendChild(row);
-
     });
+}
 
+function mostrarErrorDeConexion(error) {
+    console.error(error);
+
+    const textarea = document.getElementById("resultado");
+    const tabla = document.querySelector("#tablaErrores tbody");
+
+    if (tabla) {
+        tabla.innerHTML = "";
+    }
+
+    if (textarea) {
+        textarea.value = "ERROR: No se pudo conectar con el backend";
+    }
 }

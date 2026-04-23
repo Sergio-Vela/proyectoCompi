@@ -5,15 +5,19 @@ chdir(__DIR__);
 function ejecutar($archivo) {
 
     $archivo = realpath($archivo);
+    $build = __DIR__ . "\\build.bat";
+    $base = __DIR__;
 
     if (!$archivo) {
         return "ERROR: No se encontro el archivo";
     }
 
-    $SRC = __DIR__ . "\\src";
-    $CUP = "C:\\Compiladores\\tools\\java-cup-11b.jar";
+    if (!file_exists($build)) {
+        return "ERROR: No se encontro build.bat";
+    }
 
-    $cmd = 'cmd /c "cd /d "' . $SRC . '" && javac -cp ".;' . $CUP . '" *.java && java -cp ".;' . $CUP . '" Main "' . $archivo . '" 2>&1"';
+    $archivoRelativo = basename($archivo);
+    $cmd = 'cmd /c "cd /d "' . $base . '" && build.bat "' . $archivoRelativo . '" 2>&1"';
 
     $output = [];
     $return_var = 0;
@@ -22,28 +26,11 @@ function ejecutar($archivo) {
 
     $salida = implode("\n", $output);
 
-    if (empty($salida)) {
+    if (empty(trim($salida))) {
         return "ERROR: No se pudo ejecutar";
     }
 
-    $lineas = explode("\n", $salida);
-    $errores = [];
-
-    foreach ($lineas as $linea) {
-        $linea = trim($linea);
-
-        if ($linea === "") continue;
-
-        if (strpos($linea, "ERROR:") !== false) {
-            $errores[] = $linea;
-        }
-    }
-
-    if (count($errores) > 0) {
-        return implode("\n", $errores);
-    }
-
-    return $salida;
+    return trim($salida);
 }
 
 
@@ -54,7 +41,7 @@ if (!empty($_FILES['archivo'])) {
         exit;
     }
 
-    $ruta = __DIR__ . "\\entrada.sql";
+    $ruta = __DIR__ . "\\entrada_upload.sql";
 
     if (!move_uploaded_file($_FILES['archivo']['tmp_name'], $ruta)) {
         echo "ERROR: No se pudo guardar el archivo";
