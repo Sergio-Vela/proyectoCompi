@@ -1,1 +1,1 @@
-drop data base banco;
+select * from tabla;

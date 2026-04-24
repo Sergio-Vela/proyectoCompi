@@ -1,1 +1,0 @@
-idCuenta,FechaCorte,SaldoActual,SaldoMora,diasmora,idEstado,alturamora

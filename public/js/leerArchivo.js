@@ -114,6 +114,16 @@ function llenarTablaErrores(texto) {
             }
         }
 
+        if (linea.includes("Ejecucion")) {
+            tipo = "Error de Ejecución";
+
+            const match = linea.match(/ERROR:\s*Ejecucion\s*\|\s*(.+)/);
+
+            if (match) {
+                valor = match[1];
+            }
+        }
+
         const row = document.createElement("tr");
 
         row.innerHTML = `

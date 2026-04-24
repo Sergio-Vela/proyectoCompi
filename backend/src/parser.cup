@@ -1,6 +1,7 @@
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
+import db_logic.AggregationFunction;
 import db_logic.ColumnAssignment;
 import db_logic.ComparisonOperator;
 import db_logic.ConditionSpec;
@@ -55,14 +56,23 @@ parser code {:
         }
     }
 
-    private void ejecutarCreateTable(String nombreTabla, List<String> columnas) {
-        try {
-            fileDatabaseManager.createTable(nombreTabla, columnas);
-            System.out.println("CREATE TABLE valido");
-        } catch (Exception e) {
-            reportExecutionError(e.getMessage());
-        }
-    }
+     private void ejecutarCreateTable(String nombreTabla, List<String> columnas) {
+         try {
+             fileDatabaseManager.createTable(nombreTabla, columnas);
+             System.out.println("CREATE TABLE valido");
+         } catch (Exception e) {
+             reportExecutionError(e.getMessage());
+         }
+     }
+
+     private void ejecutarCreateTable(String nombreTabla, List<String> columnas, String primaryKey) {
+         try {
+             fileDatabaseManager.createTable(nombreTabla, columnas, primaryKey);
+             System.out.println("CREATE TABLE valido");
+         } catch (Exception e) {
+             reportExecutionError(e.getMessage());
+         }
+     }
 
     private void ejecutarUseDatabase(String nombreBase) {
         try {
@@ -111,28 +121,69 @@ parser code {:
         }
     }
 
-    private void ejecutarSelect(SelectQuery consulta, TableReference tabla, ConditionSpec condicion) {
-        try {
-            List<String> resultados = fileDatabaseManager.selectFromTable(consulta, tabla, condicion);
-            for (String linea : resultados) {
-                System.out.println(linea);
-            }
-        } catch (Exception e) {
-            reportExecutionError(e.getMessage());
-        }
-    }
+     private void ejecutarSelect(SelectQuery consulta, TableReference tabla, ConditionSpec condicion) {
+         try {
+             List<String> resultados = fileDatabaseManager.selectFromTable(consulta, tabla, condicion);
+             for (String linea : resultados) {
+                 System.out.println(linea);
+             }
+         } catch (Exception e) {
+             reportExecutionError(e.getMessage());
+         }
+     }
+
+     private void ejecutarSelectWithGroupBy(SelectQuery consulta, TableReference tabla, ConditionSpec condicion, List<String> groupByColumns) {
+         try {
+             List<String> resultados = fileDatabaseManager.selectFromTable(consulta, tabla, condicion, groupByColumns);
+             for (String linea : resultados) {
+                 System.out.println(linea);
+             }
+         } catch (Exception e) {
+             reportExecutionError(e.getMessage());
+         }
+     }
+
+     private void ejecutarDelete(String nombreTabla, ConditionSpec condicion) {
+         try {
+             fileDatabaseManager.deleteFromTable(nombreTabla, condicion);
+             System.out.println("DELETE con WHERE valido");
+         } catch (Exception e) {
+             reportExecutionError(e.getMessage());
+         }
+     }
+
+     private void ejecutarDropDatabase(String nombreBase) {
+         try {
+             fileDatabaseManager.dropDatabase(nombreBase);
+             System.out.println("DROP DATABASE valido");
+         } catch (Exception e) {
+             reportExecutionError(e.getMessage());
+         }
+     }
+
+     private void ejecutarDropTable(String nombreTabla) {
+         try {
+             fileDatabaseManager.dropTable(nombreTabla);
+             System.out.println("DROP TABLE valido");
+         } catch (Exception e) {
+             reportExecutionError(e.getMessage());
+         }
+     }
 
 :};
 
 terminal CREATE, DATABASE, TABLE, INSERT, INTO, VALUES, SELECT, FROM, STAR, SEMI, COMMA, USE;
+terminal DROP, DELETE, PRIMARY, KEY;
 terminal LPAREN, RPAREN;
 terminal Object NUMBER;
 terminal String STRING;
 terminal String ID;
 
 terminal UPDATE, SET, WHERE, JOIN, ON, AS;
+terminal INNER;
 terminal INT, VARCHAR, DATETIME, DECIMAL;
 terminal CONTEO;
+terminal SUM, AVG, COUNT, GROUP, BY;
 terminal EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUALS, LESS_THAN_OR_EQUALS, NOT_EQUALS, DOT;
 
 non terminal program;
@@ -144,12 +195,19 @@ non terminal List<String> values_list;
 non terminal List<String> column_list;
 non terminal String column;
 non terminal String type;
+non terminal String column_with_pk;
 
 non terminal List<String> column_names;
+non terminal String primary_key_opt;
+non terminal String pk_inline_opt;
 
 non terminal SelectQuery select_list;
+non terminal List<AggregationFunction> aggregation_list;
+non terminal AggregationFunction aggregation;
+non terminal List<String> group_by_columns;
 non terminal TableReference table_ref;
 non terminal TableReference table_factor;
+non terminal JoinCondition join_on_condition;
 non terminal ConditionSpec condition;
 non terminal FieldReference field;
 non terminal List<FieldReference> field_list;
@@ -165,22 +223,46 @@ stmt_list ::= stmt_list stmt
             | stmt
             ;
 
-stmt ::= CREATE TABLE ID:tableName LPAREN column_list:columns RPAREN SEMI
-        {: ejecutarCreateTable(tableName, columns); :}
+stmt ::= CREATE TABLE ID:tableName LPAREN column_list:columns primary_key_opt:pk RPAREN SEMI
+        {: 
+            String primaryKey = pk;
+            // Buscar PRIMARY KEY inline si no se especificó al final
+            if (primaryKey == null) {
+                for (String col : columns) {
+                    if (col.contains("__PK__")) {
+                        primaryKey = col.replace("__PK__", "").trim();
+                        break;
+                    }
+                }
+            }
+            ejecutarCreateTable(tableName, columns, primaryKey); 
+        :}
       | CREATE TABLE ID:tableName SEMI
-        {: ejecutarCreateTable(tableName, new ArrayList<String>()); :}
+        {: ejecutarCreateTable(tableName, new ArrayList<String>(), null); :}
       | CREATE DATABASE ID:databaseName SEMI
         {: ejecutarCreateDatabase(databaseName); :}
       | USE ID:databaseName SEMI
         {: ejecutarUseDatabase(databaseName); :}
+      | DROP DATABASE ID:databaseName SEMI
+        {: ejecutarDropDatabase(databaseName); :}
+      | DROP TABLE ID:tableName SEMI
+        {: ejecutarDropTable(tableName); :}
       | SELECT select_list:query FROM table_ref:tableSource SEMI
         {: ejecutarSelect(query, tableSource); :}
       | SELECT select_list:query FROM table_ref:tableSource WHERE condition:whereClause SEMI
         {: ejecutarSelect(query, tableSource, whereClause); :}
+      | SELECT select_list:query FROM table_ref:tableSource GROUP BY group_by_columns:groupCols SEMI
+        {: ejecutarSelectWithGroupBy(query, tableSource, null, groupCols); :}
+      | SELECT select_list:query FROM table_ref:tableSource WHERE condition:whereClause GROUP BY group_by_columns:groupCols SEMI
+        {: ejecutarSelectWithGroupBy(query, tableSource, whereClause, groupCols); :}
       | UPDATE ID SET assignments SEMI
         {: System.out.println("UPDATE valido"); :}
       | UPDATE ID:tableName SET assignments:items WHERE condition:whereClause SEMI
         {: ejecutarUpdate(tableName, items, whereClause); :}
+      | DELETE FROM ID:tableName WHERE condition:whereClause SEMI
+        {: ejecutarDelete(tableName, whereClause); :}
+      | DELETE FROM ID:tableName SEMI
+        {: ejecutarDelete(tableName, null); :}
       | INSERT INTO ID:tableName VALUES LPAREN values_list:values RPAREN SEMI
         {: ejecutarInsert(tableName, values); :}
       | INSERT INTO ID:tableName LPAREN column_names:columns RPAREN VALUES LPAREN values_list:values RPAREN SEMI
@@ -215,8 +297,12 @@ select_list ::= STAR
               {: RESULT = new SelectQuery(true, new ArrayList<FieldReference>()); :}
               | CONTEO LPAREN STAR RPAREN
               {: RESULT = new SelectQuery(false, new ArrayList<FieldReference>()); :}
+              | aggregation_list:aggs
+              {: RESULT = new SelectQuery(false, new ArrayList<FieldReference>(), aggs, null); :}
               | field_list:fields
               {: RESULT = new SelectQuery(false, fields); :}
+              | field_list:fields COMMA aggregation_list:aggs
+              {: RESULT = new SelectQuery(false, fields, aggs, null); :}
               ;
 
 field ::= ID:name
@@ -257,8 +343,11 @@ condition ::= field:left EQUALS field:right
             {: RESULT = new ConditionSpec(ComparisonOperator.NOT_EQUALS, left, null, val); :}
             ;
 
-table_ref ::= table_ref:left JOIN table_factor:right ON LPAREN condition:onCondition RPAREN
-            {: RESULT = new TableReference(left.getTableName(), left.getAlias(), true); :}
+table_ref ::= table_ref:left INNER JOIN table_factor:right ON join_on_condition:joinCond
+            {: 
+                left.addJoin(right, joinCond);
+                RESULT = left;
+            :}
             | table_factor:factor
             {: RESULT = factor; :}
             ;
@@ -271,6 +360,10 @@ table_factor ::= ID:name
                {: RESULT = new TableReference(name, alias, false); :}
                ;
 
+join_on_condition ::= ID:leftTable DOT ID:leftCol EQUALS ID:rightTable DOT ID:rightCol
+                    {: RESULT = new JoinCondition(leftTable, leftCol, rightTable, rightCol); :}
+                    ;
+
 column_list ::= column_list:list COMMA column:col
               {: list.add(col); RESULT = list; :}
               | column:col
@@ -278,18 +371,30 @@ column_list ::= column_list:list COMMA column:col
               ;
 
 column ::= ID:name type:t
-        {: RESULT = name; :}
+        {: 
+            if (t != null && t.contains("__PK__")) {
+                RESULT = name + "__PK__"; 
+            } else {
+                RESULT = name;
+            }
+        :}
         ;
 
-type ::= INT
-       {: RESULT = "INT"; :}
-       | DATETIME
-       {: RESULT = "DATETIME"; :}
-       | VARCHAR LPAREN NUMBER RPAREN
-       {: RESULT = "VARCHAR"; :}
-       | DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN
-       {: RESULT = "DECIMAL"; :}
+type ::= INT pk_inline_opt:pk
+       {: RESULT = (pk != null ? "INT__PK__" : "INT"); :}
+       | DATETIME pk_inline_opt:pk
+       {: RESULT = (pk != null ? "DATETIME__PK__" : "DATETIME"); :}
+       | VARCHAR LPAREN NUMBER RPAREN pk_inline_opt:pk
+       {: RESULT = (pk != null ? "VARCHAR__PK__" : "VARCHAR"); :}
+       | DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN pk_inline_opt:pk
+       {: RESULT = (pk != null ? "DECIMAL__PK__" : "DECIMAL"); :}
        ;
+
+pk_inline_opt ::= PRIMARY KEY
+                {: RESULT = "PRIMARY"; :}
+                | /* empty */
+                {: RESULT = null; :}
+                ;
 
 values_list ::= values_list:list COMMA value:val
               {: list.add(val); RESULT = list; :}
@@ -302,3 +407,31 @@ value ::= NUMBER:num
         | STRING:text
         {: RESULT = text; :}
         ;
+
+primary_key_opt ::= COMMA PRIMARY KEY LPAREN ID:colName RPAREN
+                  {: RESULT = colName; :}
+                  | /* empty */
+                  {: RESULT = null; :}
+                  ;
+
+aggregation_list ::= aggregation_list:list COMMA aggregation:agg
+                   {: list.add(agg); RESULT = list; :}
+                   | aggregation:agg
+                   {: RESULT = new ArrayList<AggregationFunction>(); RESULT.add(agg); :}
+                   ;
+
+aggregation ::= SUM LPAREN ID:colName RPAREN
+              {: RESULT = new AggregationFunction(AggregationFunction.Type.SUM, colName); :}
+              | AVG LPAREN ID:colName RPAREN
+              {: RESULT = new AggregationFunction(AggregationFunction.Type.AVG, colName); :}
+              | COUNT LPAREN STAR RPAREN
+              {: RESULT = new AggregationFunction(AggregationFunction.Type.COUNT, "*"); :}
+              | COUNT LPAREN ID:colName RPAREN
+              {: RESULT = new AggregationFunction(AggregationFunction.Type.COUNT, colName); :}
+              ;
+
+group_by_columns ::= group_by_columns:list COMMA ID:colName
+                   {: list.add(colName); RESULT = list; :}
+                   | ID:colName
+                   {: RESULT = new ArrayList<String>(); RESULT.add(colName); :}
+                   ;

@@ -10,6 +10,8 @@ public class FileDatabaseManager {
     private final InsertManager insertManager;
     private final UpdateManager updateManager;
     private final SelectManager selectManager;
+    private final DeleteManager deleteManager;
+    private final DropManager dropManager;
 
     public FileDatabaseManager() {
         this.pathResolver = new DbPathResolver();
@@ -17,6 +19,8 @@ public class FileDatabaseManager {
         this.insertManager = new InsertManager(pathResolver, tableFileHandler);
         this.updateManager = new UpdateManager(pathResolver, tableFileHandler);
         this.selectManager = new SelectManager(pathResolver, tableFileHandler);
+        this.deleteManager = new DeleteManager(pathResolver, tableFileHandler);
+        this.dropManager = new DropManager(pathResolver);
     }
 
     public void createDatabase(String databaseName) throws IOException {
@@ -50,12 +54,22 @@ public class FileDatabaseManager {
     }
 
     public void createTable(String tableName, List<String> columns) throws IOException {
+        createTable(tableName, columns, null);
+    }
+
+    public void createTable(String tableName, List<String> columns, String primaryKeyColumn) throws IOException {
         File tableFile = pathResolver.getTableFile(tableName, "CREATE TABLE");
         if (tableFile.exists()) {
             throw new IOException("La tabla ya existe: " + tableName);
         }
 
-        tableFileHandler.createTableFile(tableFile, columns);
+        if (primaryKeyColumn != null && !primaryKeyColumn.isEmpty()) {
+            if (columns == null || !columns.contains(primaryKeyColumn)) {
+                throw new IOException("La columna PRIMARY KEY '" + primaryKeyColumn + "' no existe en las columnas de la tabla.");
+            }
+        }
+
+        tableFileHandler.createTableFile(tableFile, columns, primaryKeyColumn);
     }
 
     public void insertIntoTable(String tableName, List<String> values) throws IOException {
@@ -77,4 +91,21 @@ public class FileDatabaseManager {
     public List<String> selectFromTable(SelectQuery query, TableReference tableReference, ConditionSpec condition) throws IOException {
         return selectManager.selectRows(query, tableReference, condition);
     }
+
+    public List<String> selectFromTable(SelectQuery query, TableReference tableReference, ConditionSpec condition, List<String> groupByColumns) throws IOException {
+        return selectManager.selectRows(query, tableReference, condition, groupByColumns);
+    }
+
+    public void deleteFromTable(String tableName, ConditionSpec condition) throws IOException {
+        deleteManager.deleteRows(tableName, condition);
+    }
+
+    public void dropDatabase(String databaseName) throws IOException {
+        dropManager.dropDatabase(databaseName);
+    }
+
+    public void dropTable(String tableName) throws IOException {
+        dropManager.dropTable(tableName);
+    }
 }
+

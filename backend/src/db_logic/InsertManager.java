@@ -22,6 +22,9 @@ public class InsertManager {
             throw new IOException("La cantidad de valores no coincide con las columnas de la tabla: " + tableName);
         }
 
+        String primaryKeyColumn = tableFileHandler.getPrimaryKeyColumn(tableFile);
+        validatePrimaryKeyUniqueness(tableFile, headerColumns, primaryKeyColumn, values);
+
         tableFileHandler.appendRow(tableFile, values);
     }
 
@@ -53,7 +56,41 @@ public class InsertManager {
             orderedValues.set(columnIndex, values.get(i));
         }
 
+        String primaryKeyColumn = tableFileHandler.getPrimaryKeyColumn(tableFile);
+        validatePrimaryKeyUniqueness(tableFile, headerColumns, primaryKeyColumn, orderedValues);
+
         tableFileHandler.appendRow(tableFile, orderedValues);
+    }
+
+    private void validatePrimaryKeyUniqueness(File tableFile, List<String> headerColumns, String primaryKeyColumn, List<String> newValues) throws IOException {
+        if (primaryKeyColumn == null || primaryKeyColumn.isEmpty()) {
+            return;
+        }
+
+        int primaryKeyIndex = headerColumns.indexOf(primaryKeyColumn);
+        if (primaryKeyIndex < 0) {
+            throw new IOException("La columna PRIMARY KEY no existe en las columnas de la tabla.");
+        }
+
+        if (primaryKeyIndex >= newValues.size()) {
+            throw new IOException("El valor para la PRIMARY KEY no fue proporcionado.");
+        }
+
+        String newPrimaryKeyValue = newValues.get(primaryKeyIndex);
+
+        List<String> allLines = tableFileHandler.readAllLines(tableFile);
+        int startRow = (primaryKeyColumn != null && !primaryKeyColumn.isEmpty() ? 2 : 1);
+
+        for (int i = startRow; i < allLines.size(); i++) {
+            String line = allLines.get(i);
+            String[] parts = line.split(",");
+            if (primaryKeyIndex < parts.length) {
+                String existingValue = parts[primaryKeyIndex].trim();
+                if (existingValue.equals(newPrimaryKeyValue)) {
+                    throw new IOException("Ya existe un registro con la misma PRIMARY KEY: " + newPrimaryKeyValue);
+                }
+            }
+        }
     }
 
     private File requireTableFile(String tableName) throws IOException {
@@ -64,3 +101,4 @@ public class InsertManager {
         return tableFile;
     }
 }
+

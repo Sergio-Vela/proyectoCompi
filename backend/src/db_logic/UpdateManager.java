@@ -19,6 +19,7 @@ public class UpdateManager {
         File tableFile = requireTableFile(tableName);
         List<String> lines = tableFileHandler.readAllLines(tableFile);
         List<String> headerColumns = tableFileHandler.readHeaderColumns(tableFile);
+        String primaryKeyColumn = tableFileHandler.getPrimaryKeyColumn(tableFile);
 
         if (headerColumns.isEmpty()) {
             throw new IOException("La tabla no tiene columnas definidas para usar UPDATE: " + tableName);
@@ -38,7 +39,9 @@ public class UpdateManager {
             requireColumnIndex(headerColumns, assignment.getColumnName());
         }
 
-        for (int i = 1; i < lines.size(); i++) {
+        int startIndex = (primaryKeyColumn != null && !primaryKeyColumn.isEmpty() ? 2 : 1);
+        
+        for (int i = startIndex; i < lines.size(); i++) {
             String line = lines.get(i).trim();
             if (line.isEmpty()) {
                 continue;

@@ -1,2 +1,0 @@
-id,nombre,descripcion
-1,'guantes de latex','guantes desechables talla xs'

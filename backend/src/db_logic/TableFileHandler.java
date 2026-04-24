@@ -11,14 +11,28 @@ import java.util.List;
 
 public class TableFileHandler {
     public void createTableFile(File tableFile, List<String> columns) throws IOException {
+        createTableFile(tableFile, columns, null);
+    }
+
+    public void createTableFile(File tableFile, List<String> columns, String primaryKeyColumn) throws IOException {
         if (!tableFile.createNewFile()) {
             throw new IOException("No se pudo crear la tabla: " + removeExtension(tableFile.getName()));
         }
 
         if (columns != null && !columns.isEmpty()) {
+            // Limpiar los marcadores __PK__ de los nombres de columnas
+            List<String> cleanColumns = new ArrayList<String>();
+            for (String col : columns) {
+                cleanColumns.add(col.replace("__PK__", ""));
+            }
+            
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(tableFile))) {
-                writer.write(String.join(",", columns));
+                writer.write(String.join(",", cleanColumns));
                 writer.newLine();
+                if (primaryKeyColumn != null && !primaryKeyColumn.isEmpty()) {
+                    writer.write(primaryKeyColumn);
+                    writer.newLine();
+                }
             }
         }
     }
@@ -40,6 +54,20 @@ public class TableFileHandler {
             columns.add(part.trim());
         }
         return columns;
+    }
+
+    public String getPrimaryKeyColumn(File tableFile) throws IOException {
+        List<String> lines = readAllLines(tableFile);
+        if (lines.size() < 2) {
+            return null;
+        }
+
+        String secondLine = lines.get(1).trim();
+        if (secondLine.isEmpty()) {
+            return null;
+        }
+
+        return secondLine;
     }
 
     public void appendRow(File tableFile, List<String> values) throws IOException {

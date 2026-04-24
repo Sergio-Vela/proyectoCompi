@@ -13,7 +13,7 @@ CREATE TABLE tbBitacora (
   idCliente INT,
   Consulta VARCHAR(4000)
 );
-
+  
 CREATE TABLE tbCliente (
   idCLiente INT,
   PrimerNombre VARCHAR(50),

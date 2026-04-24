@@ -1,1 +1,0 @@
-idCLiente,Direccion,idEstado,idDireccion,idUbigeo1,idUbigeo2

@@ -13,7 +13,7 @@ WHITESPACE = [ \t\r\n]+
 DIGIT      = [0-9]
 DECIMAL_NUM = {DIGIT}+"."{DIGIT}+
 ID         = [a-zA-Z_][a-zA-Z0-9_]*
-STRING     = \'[^\']*\'
+STRING     = (\'[^\']*\'|\"[^\"]*\")
 
 %%
 
@@ -28,6 +28,10 @@ STRING     = \'[^\']*\'
 "SELECT"  { return new java_cup.runtime.Symbol(sym.SELECT, yyline+1, yycolumn+1); }
 "FROM"    { return new java_cup.runtime.Symbol(sym.FROM, yyline+1, yycolumn+1); }
 "USE"     { return new java_cup.runtime.Symbol(sym.USE, yyline+1, yycolumn+1); }
+"DROP"    { return new java_cup.runtime.Symbol(sym.DROP, yyline+1, yycolumn+1); }
+"DELETE"  { return new java_cup.runtime.Symbol(sym.DELETE, yyline+1, yycolumn+1); }
+"PRIMARY" { return new java_cup.runtime.Symbol(sym.PRIMARY, yyline+1, yycolumn+1); }
+"KEY"     { return new java_cup.runtime.Symbol(sym.KEY, yyline+1, yycolumn+1); }
 "*"       { return new java_cup.runtime.Symbol(sym.STAR, yyline+1, yycolumn+1); }
 ";"       { return new java_cup.runtime.Symbol(sym.SEMI, yyline+1, yycolumn+1); }
 ","       { return new java_cup.runtime.Symbol(sym.COMMA, yyline+1, yycolumn+1); }
@@ -37,6 +41,7 @@ STRING     = \'[^\']*\'
 "UPDATE"  { return new java_cup.runtime.Symbol(sym.UPDATE, yyline+1, yycolumn+1); }
 "SET"     { return new java_cup.runtime.Symbol(sym.SET, yyline+1, yycolumn+1); }
 "WHERE"   { return new java_cup.runtime.Symbol(sym.WHERE, yyline+1, yycolumn+1); }
+"INNER"   { return new java_cup.runtime.Symbol(sym.INNER, yyline+1, yycolumn+1); }
 "JOIN"    { return new java_cup.runtime.Symbol(sym.JOIN, yyline+1, yycolumn+1); }
 "ON"      { return new java_cup.runtime.Symbol(sym.ON, yyline+1, yycolumn+1); }
 "AS"      { return new java_cup.runtime.Symbol(sym.AS, yyline+1, yycolumn+1); }
@@ -47,6 +52,11 @@ STRING     = \'[^\']*\'
 "DECIMAL"  { return new java_cup.runtime.Symbol(sym.DECIMAL, yyline+1, yycolumn+1); }
 
 "conteo"  { return new java_cup.runtime.Symbol(sym.CONTEO, yyline+1, yycolumn+1); }
+"SUM"    { return new java_cup.runtime.Symbol(sym.SUM, yyline+1, yycolumn+1); }
+"AVG"    { return new java_cup.runtime.Symbol(sym.AVG, yyline+1, yycolumn+1); }
+"COUNT"  { return new java_cup.runtime.Symbol(sym.COUNT, yyline+1, yycolumn+1); }
+"GROUP"  { return new java_cup.runtime.Symbol(sym.GROUP, yyline+1, yycolumn+1); }
+"BY"     { return new java_cup.runtime.Symbol(sym.BY, yyline+1, yycolumn+1); }
 
 "="  { return new java_cup.runtime.Symbol(sym.EQUALS, yyline+1, yycolumn+1); }
 ">=" { return new java_cup.runtime.Symbol(sym.GREATER_THAN_OR_EQUALS, yyline+1, yycolumn+1); }
