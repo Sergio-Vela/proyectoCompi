@@ -1,0 +1,1 @@
+idProducto,NombreProducto,idtipoOperacion,idEstado,tasainteres,montominimo,montomaximo,idtipoGarantia,plazominimo,plazomaximo,fechacreacion

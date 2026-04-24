@@ -1,0 +1,1 @@
+idCLiente,PrimerNombre,SegundoNombre,TercerNombre,PrimerApellido,SegundoApellido,ApellidodeCasada,Fechanacimiento,Genero,EstadoCivil,ProfesionuOficio,EstaLaborando,idSucursal,FechaCreacion,DireccionLaboral,TelefonoLaboral

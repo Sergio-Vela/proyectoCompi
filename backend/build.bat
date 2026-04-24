@@ -5,6 +5,7 @@ chcp 65001 >nul
 
 set "ROOT=%~dp0"
 set "SRC=%ROOT%src"
+set "OUT=%ROOT%out"
 set "TOOLS=C:\Compiladores\tools"
 
 if "%1"=="" (
@@ -36,6 +37,8 @@ if "%CUP_JAR%"=="" (
 
 pushd "%SRC%"
 
+if not exist "%OUT%" mkdir "%OUT%"
+
 java -jar "%JFLEX_JAR%" lexer.flex
 if errorlevel 1 (
   echo ERROR: Fallo JFlex
@@ -50,7 +53,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-javac -cp ".;%CUP_JAR%" *.java
+javac -cp ".;%CUP_JAR%" -d "%OUT%" *.java db_logic\*.java
 if errorlevel 1 (
   echo ERROR: Fallo compilacion
   popd
@@ -58,7 +61,7 @@ if errorlevel 1 (
 )
 
 REM IMPORTANTE: usar ruta absoluta
-java -Dfile.encoding=UTF-8 -cp ".;%CUP_JAR%" Main "%ROOT%%INPUT%"
+java -Dfile.encoding=UTF-8 -cp "%OUT%;%CUP_JAR%" Main "%ROOT%%INPUT%"
 
 popd
 endlocal

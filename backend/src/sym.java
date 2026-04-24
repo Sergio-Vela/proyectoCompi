@@ -6,40 +6,48 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int WHERE = 19;
-  public static final int FROM = 8;
-  public static final int SELECT = 7;
-  public static final int DATETIME = 25;
-  public static final int INT = 23;
-  public static final int RPAREN = 13;
-  public static final int CONTEO = 27;
-  public static final int DECIMAL = 26;
-  public static final int SEMI = 10;
-  public static final int STAR = 9;
-  public static final int ON = 21;
-  public static final int AS = 22;
-  public static final int LPAREN = 12;
-  public static final int ID = 16;
-  public static final int TABLE = 3;
-  public static final int EQUALS = 28;
-  public static final int VARCHAR = 24;
-  public static final int STRING = 15;
-  public static final int CREATE = 2;
-  public static final int COMMA = 11;
-  public static final int INSERT = 4;
+  public static final int EQUALS = 30;
+  public static final int DATETIME = 27;
+  public static final int LPAREN = 14;
+  public static final int SEMI = 11;
+  public static final int INT = 25;
+  public static final int UPDATE = 19;
+  public static final int GREATER_THAN = 31;
+  public static final int STAR = 10;
+  public static final int WHERE = 21;
+  public static final int RPAREN = 15;
+  public static final int USE = 13;
+  public static final int LESS_THAN_OR_EQUALS = 34;
+  public static final int COMMA = 12;
+  public static final int ON = 23;
+  public static final int VARCHAR = 26;
+  public static final int SELECT = 8;
+  public static final int DOT = 36;
+  public static final int ID = 18;
   public static final int EOF = 0;
-  public static final int NUMBER = 14;
-  public static final int VALUES = 6;
-  public static final int SET = 18;
-  public static final int DOT = 29;
+  public static final int DECIMAL = 28;
+  public static final int TABLE = 4;
   public static final int error = 1;
-  public static final int UPDATE = 17;
-  public static final int JOIN = 20;
-  public static final int INTO = 5;
+  public static final int VALUES = 7;
+  public static final int JOIN = 22;
+  public static final int NUMBER = 16;
+  public static final int GREATER_THAN_OR_EQUALS = 33;
+  public static final int FROM = 9;
+  public static final int INTO = 6;
+  public static final int INSERT = 5;
+  public static final int CREATE = 2;
+  public static final int NOT_EQUALS = 35;
+  public static final int DATABASE = 3;
+  public static final int STRING = 17;
+  public static final int CONTEO = 29;
+  public static final int AS = 24;
+  public static final int LESS_THAN = 32;
+  public static final int SET = 20;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "CREATE",
+  "DATABASE",
   "TABLE",
   "INSERT",
   "INTO",
@@ -49,6 +57,7 @@ public class sym {
   "STAR",
   "SEMI",
   "COMMA",
+  "USE",
   "LPAREN",
   "RPAREN",
   "NUMBER",
@@ -66,6 +75,11 @@ public class sym {
   "DECIMAL",
   "CONTEO",
   "EQUALS",
+  "GREATER_THAN",
+  "LESS_THAN",
+  "GREATER_THAN_OR_EQUALS",
+  "LESS_THAN_OR_EQUALS",
+  "NOT_EQUALS",
   "DOT"
   };
 }

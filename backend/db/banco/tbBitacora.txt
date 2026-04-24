@@ -1,0 +1,1 @@
+idbitacora,Fecha,idmotivoconsulta,idCliente,Consulta

@@ -1,0 +1,1 @@
+idSucursal,NombreSucursal,Direccion,Telefono

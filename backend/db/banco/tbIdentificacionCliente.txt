@@ -1,0 +1,1 @@
+idCliente,Documento,idtipodocumento

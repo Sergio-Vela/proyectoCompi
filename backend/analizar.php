@@ -11,9 +11,14 @@ function ejecutar($archivo) {
     }
 
     $SRC = __DIR__ . "\\src";
+    $OUT = __DIR__ . "\\out";
     $CUP = "C:\\Compiladores\\tools\\java-cup-11b.jar";
 
-    $cmd = 'cmd /c "cd /d "' . $SRC . '" && javac -cp ".;' . $CUP . '" *.java && java -cp ".;' . $CUP . '" Main "' . $archivo . '" 2>&1"';
+    if (!is_dir($OUT)) {
+        mkdir($OUT, 0777, true);
+    }
+
+    $cmd = 'cmd /c "cd /d "' . $SRC . '" && javac -cp ".;' . $CUP . '" -d "' . $OUT . '" *.java db_logic\\*.java && java -cp "' . $OUT . ';' . $CUP . '" Main "' . $archivo . '" 2>&1"';
 
     $output = [];
     $return_var = 0;

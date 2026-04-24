@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Vela Query Language (VQL) Workspace</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;family=Fira+Code:wght@300..700&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="css/styles2.css" rel="stylesheet" />
+</head>
+
+<body>
+    <header>
+        <div class="header-brand">
+            <h1>Vela Query Language VQL</h1>
+        </div>
+    </header>
+    <div class="app-container">
+        <aside>
+            <div class="sidebar-header">
+                <div class="engine-status">
+                    <div class="engine-icon"><span class="material-symbols-outlined"
+                            style="font-size: 14px;">database</span></div>
+                    <div class="engine-info">
+                        <div class="name">Bases de datos</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active">
+                    <span class="material-symbols-outlined"
+                        style="font-variation-settings: 'FILL' 1;">folder_open</span> database_name
+                </button>
+                <button class="nav-item">
+                    <span class="material-symbols-outlined">dataset</span> table_name
+                </button>
+            </nav>
+        </aside>
+        <main>
+            <div class="workspace-top">
+                <section class="editor-panel">
+                    <div class="panel-header">
+                        <span class="label" style="color: var(--on-surface-variant);">Consulta</span>
+                        <div style="display: flex; gap: 8px;">
+                            <input id="vql-file-input" style="display: none;" type="file" />
+                            <button class="btn-small" onclick="document.getElementById('vql-file-input').click()">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">upload_file</span>
+                                Subir archivo
+                            </button>
+                            <button class="btn-run-accent">Ejecutar</button>
+                        </div>
+                    </div>
+                    <div class="editor-container">
+                        <div class="code-area">
+                            <div class="gutter mono">
+                                <span>1</span>
+                            </div>
+                            <div class="editable mono" contenteditable="true" spellcheck="false"></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="results-panel">
+                    <div class="panel-header primary-header">
+                        <span class="label">Resultado</span>
+                    </div>
+                    <div class="table-container no-scrollbar">
+                        <table>
+                            <thead>
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+            <section class="console-panel">
+                <div class="panel-header">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span class="label"
+                            style="color: var(--on-surface-variant); display: flex; align-items: center; gap: 8px;">
+                            <span class="material-symbols-outlined text-error" style="font-size: 14px;">warning</span>
+                            Panel de errores
+                        </span>
+                    </div>
+                </div>
+                <div class="table-container no-scrollbar">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>linea</th>
+                                <th>columna</th>
+                                <th>valor</th>
+                                <th>comentario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Empty Body -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <footer>
+        <div class="footer-left">
+            <div class="footer-item" style="opacity: 0.8;">
+                <span class="material-symbols-outlined" style="font-size: 14px;">list_alt</span>
+                Items: 0
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

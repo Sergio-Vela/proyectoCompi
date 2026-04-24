@@ -1,0 +1,1 @@
+idtipodocumento,tipodocumento,idEstado

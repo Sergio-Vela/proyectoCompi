@@ -1,6 +1,17 @@
 import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.List;
+import db_logic.ColumnAssignment;
+import db_logic.ComparisonOperator;
+import db_logic.ConditionSpec;
+import db_logic.FieldReference;
+import db_logic.FileDatabaseManager;
+import db_logic.SelectQuery;
+import db_logic.TableReference;
 
 parser code {:
+
+    private final FileDatabaseManager fileDatabaseManager = new FileDatabaseManager();
 
     public boolean hayErrores = false;
 
@@ -29,40 +40,122 @@ parser code {:
         );
     }
 
+    private void reportExecutionError(String message) {
+        hayErrores = true;
+        Errors.hayErrores = true;
+        System.out.println("ERROR: Ejecucion | " + message);
+    }
+
+    private void ejecutarCreateDatabase(String nombreBase) {
+        try {
+            fileDatabaseManager.createDatabase(nombreBase);
+            System.out.println("CREATE DATABASE valido");
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
+    private void ejecutarCreateTable(String nombreTabla, List<String> columnas) {
+        try {
+            fileDatabaseManager.createTable(nombreTabla, columnas);
+            System.out.println("CREATE TABLE valido");
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
+    private void ejecutarUseDatabase(String nombreBase) {
+        try {
+            fileDatabaseManager.useDatabase(nombreBase);
+            System.out.println("USE valido");
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
+    private void ejecutarInsert(String nombreTabla, List<String> valores) {
+        try {
+            fileDatabaseManager.insertIntoTable(nombreTabla, valores);
+            System.out.println("INSERT VALUES valido");
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
+    private void ejecutarInsert(String nombreTabla, List<String> columnas, List<String> valores) {
+        try {
+            fileDatabaseManager.insertIntoTable(nombreTabla, columnas, valores);
+            System.out.println("INSERT con columnas valido");
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
+    private void ejecutarUpdate(String nombreTabla, List<ColumnAssignment> asignaciones, ConditionSpec condicion) {
+        try {
+            fileDatabaseManager.updateTable(nombreTabla, asignaciones, condicion);
+            System.out.println("UPDATE con WHERE valido");
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
+    private void ejecutarSelect(SelectQuery consulta, TableReference tabla) {
+        try {
+            List<String> resultados = fileDatabaseManager.selectFromTable(consulta, tabla);
+            for (String linea : resultados) {
+                System.out.println(linea);
+            }
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
+    private void ejecutarSelect(SelectQuery consulta, TableReference tabla, ConditionSpec condicion) {
+        try {
+            List<String> resultados = fileDatabaseManager.selectFromTable(consulta, tabla, condicion);
+            for (String linea : resultados) {
+                System.out.println(linea);
+            }
+        } catch (Exception e) {
+            reportExecutionError(e.getMessage());
+        }
+    }
+
 :};
 
-terminal CREATE, TABLE, INSERT, INTO, VALUES, SELECT, FROM, STAR, SEMI, COMMA;
+terminal CREATE, DATABASE, TABLE, INSERT, INTO, VALUES, SELECT, FROM, STAR, SEMI, COMMA, USE;
 terminal LPAREN, RPAREN;
-terminal Double NUMBER;
+terminal Object NUMBER;
 terminal String STRING;
 terminal String ID;
 
 terminal UPDATE, SET, WHERE, JOIN, ON, AS;
 terminal INT, VARCHAR, DATETIME, DECIMAL;
 terminal CONTEO;
-terminal EQUALS, DOT;
+terminal EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_OR_EQUALS, LESS_THAN_OR_EQUALS, NOT_EQUALS, DOT;
 
 non terminal program;
 non terminal stmt_list;
 non terminal stmt;
-non terminal value;
-non terminal values_list;
+non terminal String value;
+non terminal List<String> values_list;
 
-non terminal column_list;
-non terminal column;
-non terminal type;
+non terminal List<String> column_list;
+non terminal String column;
+non terminal String type;
 
-non terminal column_names;
+non terminal List<String> column_names;
 
-non terminal select_list;
-non terminal table_ref;
-non terminal table_factor;
-non terminal condition;
-non terminal field;
-non terminal field_list;
+non terminal SelectQuery select_list;
+non terminal TableReference table_ref;
+non terminal TableReference table_factor;
+non terminal ConditionSpec condition;
+non terminal FieldReference field;
+non terminal List<FieldReference> field_list;
 
-non terminal assignments;
-non terminal assignment;
+non terminal List<ColumnAssignment> assignments;
+non terminal ColumnAssignment assignment;
 
 start with program;
 
@@ -72,18 +165,26 @@ stmt_list ::= stmt_list stmt
             | stmt
             ;
 
-stmt ::= CREATE TABLE ID LPAREN column_list RPAREN SEMI
-        {: System.out.println("CREATE TABLE valido"); :}
-      | SELECT select_list FROM table_ref SEMI
-        {: System.out.println("SELECT valido"); :}
+stmt ::= CREATE TABLE ID:tableName LPAREN column_list:columns RPAREN SEMI
+        {: ejecutarCreateTable(tableName, columns); :}
+      | CREATE TABLE ID:tableName SEMI
+        {: ejecutarCreateTable(tableName, new ArrayList<String>()); :}
+      | CREATE DATABASE ID:databaseName SEMI
+        {: ejecutarCreateDatabase(databaseName); :}
+      | USE ID:databaseName SEMI
+        {: ejecutarUseDatabase(databaseName); :}
+      | SELECT select_list:query FROM table_ref:tableSource SEMI
+        {: ejecutarSelect(query, tableSource); :}
+      | SELECT select_list:query FROM table_ref:tableSource WHERE condition:whereClause SEMI
+        {: ejecutarSelect(query, tableSource, whereClause); :}
       | UPDATE ID SET assignments SEMI
         {: System.out.println("UPDATE valido"); :}
-      | UPDATE ID SET assignments WHERE condition SEMI
-        {: System.out.println("UPDATE con WHERE valido"); :}
-      | INSERT INTO ID VALUES LPAREN values_list RPAREN SEMI
-        {: System.out.println("INSERT VALUES valido"); :}
-      | INSERT INTO ID LPAREN column_names RPAREN VALUES LPAREN values_list RPAREN SEMI
-        {: System.out.println("INSERT con columnas valido"); :}
+      | UPDATE ID:tableName SET assignments:items WHERE condition:whereClause SEMI
+        {: ejecutarUpdate(tableName, items, whereClause); :}
+      | INSERT INTO ID:tableName VALUES LPAREN values_list:values RPAREN SEMI
+        {: ejecutarInsert(tableName, values); :}
+      | INSERT INTO ID:tableName LPAREN column_names:columns RPAREN VALUES LPAREN values_list:values RPAREN SEMI
+        {: ejecutarInsert(tableName, columns, values); :}
       | INSERT INTO ID SELECT select_list FROM table_ref SEMI
         {: System.out.println("INSERT SELECT valido"); :}
       | INSERT INTO ID LPAREN column_names RPAREN SELECT select_list FROM table_ref SEMI
@@ -94,58 +195,110 @@ stmt ::= CREATE TABLE ID LPAREN column_list RPAREN SEMI
         {: hayErrores = true; :}
       ;
 
-column_names ::= column_names COMMA ID
-               | ID
+column_names ::= column_names:list COMMA ID:name
+               {: list.add(name); RESULT = list; :}
+               | ID:name
+               {: RESULT = new ArrayList<String>(); RESULT.add(name); :}
                ;
 
-assignments ::= assignments COMMA assignment
-              | assignment
+assignments ::= assignments:list COMMA assignment:item
+              {: list.add(item); RESULT = list; :}
+              | assignment:item
+              {: RESULT = new ArrayList<ColumnAssignment>(); RESULT.add(item); :}
               ;
 
-assignment ::= ID EQUALS value;
+assignment ::= ID:name EQUALS value:val
+            {: RESULT = new ColumnAssignment(name, val); :}
+            ;
 
 select_list ::= STAR
+              {: RESULT = new SelectQuery(true, new ArrayList<FieldReference>()); :}
               | CONTEO LPAREN STAR RPAREN
-              | field_list
+              {: RESULT = new SelectQuery(false, new ArrayList<FieldReference>()); :}
+              | field_list:fields
+              {: RESULT = new SelectQuery(false, fields); :}
               ;
 
-field ::= ID
-        | ID DOT ID
+field ::= ID:name
+        {: RESULT = new FieldReference(null, name); :}
+        | ID:left DOT ID:right
+        {: RESULT = new FieldReference(left, right); :}
         ;
 
-field_list ::= field_list COMMA field
-             | field
+field_list ::= field_list:list COMMA field:item
+             {: list.add(item); RESULT = list; :}
+             | field:item
+             {: RESULT = new ArrayList<FieldReference>(); RESULT.add(item); :}
              ;
 
-condition ::= field EQUALS field
-            | field EQUALS value
+condition ::= field:left EQUALS field:right
+            {: RESULT = new ConditionSpec(ComparisonOperator.EQUALS, left, right, null); :}
+            | field:left EQUALS value:val
+            {: RESULT = new ConditionSpec(ComparisonOperator.EQUALS, left, null, val); :}
+            | field:left GREATER_THAN field:right
+            {: RESULT = new ConditionSpec(ComparisonOperator.GREATER_THAN, left, right, null); :}
+            | field:left GREATER_THAN value:val
+            {: RESULT = new ConditionSpec(ComparisonOperator.GREATER_THAN, left, null, val); :}
+            | field:left LESS_THAN field:right
+            {: RESULT = new ConditionSpec(ComparisonOperator.LESS_THAN, left, right, null); :}
+            | field:left LESS_THAN value:val
+            {: RESULT = new ConditionSpec(ComparisonOperator.LESS_THAN, left, null, val); :}
+            | field:left GREATER_THAN_OR_EQUALS field:right
+            {: RESULT = new ConditionSpec(ComparisonOperator.GREATER_THAN_OR_EQUALS, left, right, null); :}
+            | field:left GREATER_THAN_OR_EQUALS value:val
+            {: RESULT = new ConditionSpec(ComparisonOperator.GREATER_THAN_OR_EQUALS, left, null, val); :}
+            | field:left LESS_THAN_OR_EQUALS field:right
+            {: RESULT = new ConditionSpec(ComparisonOperator.LESS_THAN_OR_EQUALS, left, right, null); :}
+            | field:left LESS_THAN_OR_EQUALS value:val
+            {: RESULT = new ConditionSpec(ComparisonOperator.LESS_THAN_OR_EQUALS, left, null, val); :}
+            | field:left NOT_EQUALS field:right
+            {: RESULT = new ConditionSpec(ComparisonOperator.NOT_EQUALS, left, right, null); :}
+            | field:left NOT_EQUALS value:val
+            {: RESULT = new ConditionSpec(ComparisonOperator.NOT_EQUALS, left, null, val); :}
             ;
 
-table_ref ::= table_ref JOIN table_factor ON LPAREN condition RPAREN
-            | table_factor
+table_ref ::= table_ref:left JOIN table_factor:right ON LPAREN condition:onCondition RPAREN
+            {: RESULT = new TableReference(left.getTableName(), left.getAlias(), true); :}
+            | table_factor:factor
+            {: RESULT = factor; :}
             ;
 
-table_factor ::= ID
-               | ID ID
-               | ID AS ID
+table_factor ::= ID:name
+               {: RESULT = new TableReference(name, name, false); :}
+               | ID:name ID:alias
+               {: RESULT = new TableReference(name, alias, false); :}
+               | ID:name AS ID:alias
+               {: RESULT = new TableReference(name, alias, false); :}
                ;
 
-column_list ::= column_list COMMA column
-              | column
+column_list ::= column_list:list COMMA column:col
+              {: list.add(col); RESULT = list; :}
+              | column:col
+              {: RESULT = new ArrayList<String>(); RESULT.add(col); :}
               ;
 
-column ::= ID type;
+column ::= ID:name type:t
+        {: RESULT = name; :}
+        ;
 
 type ::= INT
+       {: RESULT = "INT"; :}
        | DATETIME
+       {: RESULT = "DATETIME"; :}
        | VARCHAR LPAREN NUMBER RPAREN
+       {: RESULT = "VARCHAR"; :}
        | DECIMAL LPAREN NUMBER COMMA NUMBER RPAREN
+       {: RESULT = "DECIMAL"; :}
        ;
 
-values_list ::= values_list COMMA value
-              | value
+values_list ::= values_list:list COMMA value:val
+              {: list.add(val); RESULT = list; :}
+              | value:val
+              {: RESULT = new ArrayList<String>(); RESULT.add(val); :}
               ;
 
-value ::= NUMBER
-        | STRING
+value ::= NUMBER:num
+        {: RESULT = String.valueOf(num); :}
+        | STRING:text
+        {: RESULT = text; :}
         ;
