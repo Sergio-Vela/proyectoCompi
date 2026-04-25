@@ -27,28 +27,32 @@ public class TableFileHandler {
             }
             
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(tableFile))) {
-                writer.write(String.join(",", cleanColumns));
-                writer.newLine();
+                // Línea 0: Nombre de la PRIMARY KEY (vacío si no tiene)
                 if (primaryKeyColumn != null && !primaryKeyColumn.isEmpty()) {
                     writer.write(primaryKeyColumn);
-                    writer.newLine();
+                } else {
+                    writer.write("");
                 }
+                writer.newLine();
+                // Línea 1: Headers
+                writer.write(String.join(",", cleanColumns));
+                writer.newLine();
             }
         }
     }
 
     public List<String> readHeaderColumns(File tableFile) throws IOException {
         List<String> lines = readAllLines(tableFile);
-        if (lines.isEmpty()) {
+        if (lines.size() < 2) {
             return new ArrayList<String>();
         }
 
-        String firstLine = lines.get(0).trim();
-        if (firstLine.isEmpty()) {
+        String headerLine = lines.get(1).trim();
+        if (headerLine.isEmpty()) {
             return new ArrayList<String>();
         }
 
-        String[] parts = firstLine.split(",");
+        String[] parts = headerLine.split(",");
         List<String> columns = new ArrayList<String>();
         for (String part : parts) {
             columns.add(part.trim());
@@ -58,16 +62,16 @@ public class TableFileHandler {
 
     public String getPrimaryKeyColumn(File tableFile) throws IOException {
         List<String> lines = readAllLines(tableFile);
-        if (lines.size() < 2) {
+        if (lines.isEmpty()) {
             return null;
         }
 
-        String secondLine = lines.get(1).trim();
-        if (secondLine.isEmpty()) {
+        String firstLine = lines.get(0).trim();
+        if (firstLine.isEmpty()) {
             return null;
         }
 
-        return secondLine;
+        return firstLine;
     }
 
     public void appendRow(File tableFile, List<String> values) throws IOException {

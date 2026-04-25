@@ -85,22 +85,43 @@ document.addEventListener("DOMContentLoaded", () => {
             if (linea.includes("Lexico")) {
                 tipo = "Error Léxico";
 
-                const m = linea.match(/linea:\s*(\d+).*columna:\s*(\d+).*valor:\s*'(.+)'/);
+                const m = linea.match(/linea:\s*(-?\d+).*columna:\s*(-?\d+).*valor:\s*'(.+)'/);
                 if (m) {
                     fila = m[1];
                     columna = m[2];
                     valor = m[3];
+                } else {
+                    // Si no coincide el regex, extraer lo que se pueda
+                    const partes = linea.split("|");
+                    if (partes.length > 1) {
+                        valor = partes[partes.length].trim();
+                    }
                 }
             }
 
             if (linea.includes("Sintactico")) {
                 tipo = "Error Sintáctico";
 
-                const m = linea.match(/linea:\s*(\d+).*columna:\s*(\d+).*token:\s*(.+)/);
+                const m = linea.match(/linea:\s*(-?\d+).*columna:\s*(-?\d+).*token:\s*(.+)/);
                 if (m) {
                     fila = m[1];
                     columna = m[2];
                     valor = m[3];
+                } else {
+                    // Si no coincide el regex, extraer lo que se pueda
+                    const partes = linea.split("|");
+                    if (partes.length > 1) {
+                        valor = partes[partes.length - 1].trim();
+                    }
+                }
+            }
+
+            if (linea.includes("Ejecucion")) {
+                tipo = "Error de Ejecución";
+                
+                const m = linea.match(/ERROR: Ejecucion \| (.+)/);
+                if (m) {
+                    valor = m[1];
                 }
             }
 
@@ -167,41 +188,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function pintarTablaResultado(texto) {
 
-        const tablaHead = document.querySelector(".results-panel thead tr");
-        const tablaBody = document.querySelector(".results-panel tbody");
+        const resultado = document.getElementById("resultado");
         const contador = document.getElementById("contadorErrores");
 
-        tablaHead.innerHTML = "";
-        tablaBody.innerHTML = "";
+        resultado.innerHTML = "";
 
         const lineas = texto.split("\n").filter(l => l.trim() !== "");
 
         if (lineas.length === 0) return;
 
-        // columnas
+        // Crear tabla HTML dinámicamente
+        let htmlTabla = "<table style='width: 100%; border-collapse: collapse;'>";
+        
+        // Headers
         const columnas = lineas[0].split(",");
-
+        htmlTabla += "<thead><tr>";
         columnas.forEach(col => {
-            const th = document.createElement("th");
-            th.innerText = col.trim();
-            tablaHead.appendChild(th);
+            htmlTabla += `<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>${col.trim()}</th>`;
         });
+        htmlTabla += "</tr></thead>";
 
-        // filas
+        // Filas
+        htmlTabla += "<tbody>";
         for (let i = 1; i < lineas.length; i++) {
 
             const fila = parseCSV(lineas[i]);
-
-            const tr = document.createElement("tr");
+            htmlTabla += "<tr>";
 
             fila.forEach(valor => {
-                const td = document.createElement("td");
-                td.innerText = valor.replace(/^'|'$/g, "");
-                tr.appendChild(td);
+                htmlTabla += `<td style='border: 1px solid #ddd; padding: 8px;'>${valor.replace(/^'|'$/g, "")}</td>`;
             });
 
-            tablaBody.appendChild(tr);
+            htmlTabla += "</tr>";
         }
+
+        htmlTabla += "</tbody></table>";
+        resultado.innerHTML = htmlTabla;
 
         contador.innerText = "Filas: " + (lineas.length - 1);
     }

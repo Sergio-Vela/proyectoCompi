@@ -1,0 +1,7 @@
+
+idCLiente,PrimerNombre,SegundoNombre,TercerNombre,PrimerApellido,SegundoApellido,ApellidodeCasada,Fechanacimiento,Genero,EstadoCivil,ProfesionuOficio,EstaLaborando,idSucursal,FechaCreacion,DireccionLaboral,TelefonoLaboral
+1,"Julio","Alfredo","Tercero","Rodriguez","Juarez","","1990/01/15","M","casado","Contador","Activo",1,"2024/04/01","",""
+2,"Luisa","Fernanda","Maria","Leon","Lopez","de Perez","1985/07/22","F","casada","Secretaria","Activo",1,"2024/04/02","",""
+3,"Pedro","Guillermo","","Salazar","Hernandez","","1982/11/10","M","casado","Contador","Activo",1,"2024/04/03","",""
+4,"Pedro","Guillermo","","Salazar","Hernandez","","1982/11/10","M","casado","Contador","Activo",1,"2024/04/04","",""
+5,"Pedro","Guillermo","","Salazar","Hernandez","","1982/11/10","M","casado","Contador","Activo",1,"2024/04/05","",""

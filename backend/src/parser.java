@@ -12,6 +12,7 @@ import db_logic.ComparisonOperator;
 import db_logic.ConditionSpec;
 import db_logic.FieldReference;
 import db_logic.FileDatabaseManager;
+import db_logic.JoinCondition;
 import db_logic.SelectQuery;
 import db_logic.TableReference;
 import java_cup.runtime.XMLElement;
@@ -341,6 +342,8 @@ public class parser extends java_cup.runtime.lr_parser {
     private final FileDatabaseManager fileDatabaseManager = new FileDatabaseManager();
 
     public boolean hayErrores = false;
+    private int lastKnownLine = 1;
+    private int lastKnownColumn = 1;
 
     public void report_fatal_error(String message, Object info) {
         report_error(message, info);
@@ -351,6 +354,16 @@ public class parser extends java_cup.runtime.lr_parser {
         hayErrores = true;
 
         String token;
+        int line = cur_token.left;
+        int column = cur_token.right;
+
+        // Si la posición es -1 (EOF sin información), usar la última posición conocida
+        if (line <= 0) {
+            line = lastKnownLine;
+        }
+        if (column <= 0) {
+            column = lastKnownColumn;
+        }
 
         if (cur_token.sym == sym.EOF) {
             token = "EOF (posible falta de ';')";
@@ -361,10 +374,18 @@ public class parser extends java_cup.runtime.lr_parser {
         }
 
         System.out.println(
-            "ERROR: Sintactico | linea: " + cur_token.left +
-            " columna: " + cur_token.right +
+            "ERROR: Sintactico | linea: " + line +
+            " columna: " + column +
             " token: " + token
         );
+    }
+
+    // Método para actualizar la última posición conocida (se llama después de cada token exitoso)
+    public void updateLastPosition(Symbol sym) {
+        if (sym != null && sym.left > 0) {
+            lastKnownLine = sym.left;
+            lastKnownColumn = sym.right;
+        }
     }
 
     private void reportExecutionError(String message) {

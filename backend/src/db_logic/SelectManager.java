@@ -47,8 +47,7 @@ public class SelectManager {
         result.add(buildHeaderRow(headerColumns, selectedIndexes));
 
         List<String> lines = tableFileHandler.readAllLines(tableFile);
-        String primaryKeyColumn = tableFileHandler.getPrimaryKeyColumn(tableFile);
-        int startIndex = (primaryKeyColumn != null && !primaryKeyColumn.isEmpty() ? 2 : 1);
+        int startIndex = 2;  // Línea 0: PRIMARY KEY metadata, Línea 1: headers, Línea 2+: datos
         
         for (int i = startIndex; i < lines.size(); i++) {
             String line = lines.get(i).trim();
@@ -173,8 +172,7 @@ public class SelectManager {
         // Leer datos
         List<String[]> dataRows = new ArrayList<>();
         List<String> lines = tableFileHandler.readAllLines(tableFile);
-        String primaryKeyColumn = tableFileHandler.getPrimaryKeyColumn(tableFile);
-        int startIndex = (primaryKeyColumn != null && !primaryKeyColumn.isEmpty() ? 2 : 1);
+        int startIndex = 2;  // Línea 0: PRIMARY KEY metadata, Línea 1: headers, Línea 2+: datos
         
         for (int i = startIndex; i < lines.size(); i++) {
             String line = lines.get(i).trim();
@@ -186,26 +184,30 @@ public class SelectManager {
             }
             dataRows.add(rowValues);
         }
-        //
-        // Procesar agregaciones
-        List<AggregationProcessor.AggregationResult> aggregationResults = AggregationProcessor.processAggregations(dataRows, headerColumns, query.getAggregations(), groupByColumns);
         
-        // Construir resultados
-        for (AggregationProcessor.AggregationResult aggResult : aggregationResults) {
-            List<String> rowParts = new ArrayList<>(aggResult.groupValues);
-            for (AggregationFunction agg : query.getAggregations()) {
-                Double value = aggResult.aggregateValues.get(agg.getDisplayName());
-                if (value != null) {
-                    if (agg.getType() == AggregationFunction.Type.AVG || agg.getType() == AggregationFunction.Type.SUM) {
-                        rowParts.add(String.format("%.2f", value));
+        // Procesar agregaciones
+        try {
+            List<AggregationProcessor.AggregationResult> aggregationResults = AggregationProcessor.processAggregations(dataRows, headerColumns, query.getAggregations(), groupByColumns);
+            
+            // Construir resultados
+            for (AggregationProcessor.AggregationResult aggResult : aggregationResults) {
+                List<String> rowParts = new ArrayList<>(aggResult.groupValues);
+                for (AggregationFunction agg : query.getAggregations()) {
+                    Double value = aggResult.aggregateValues.get(agg.getDisplayName());
+                    if (value != null) {
+                        if (agg.getType() == AggregationFunction.Type.AVG || agg.getType() == AggregationFunction.Type.SUM) {
+                            rowParts.add(String.format("%.2f", value));
+                        } else {
+                            rowParts.add(String.valueOf(value.intValue()));
+                        }
                     } else {
-                        rowParts.add(String.valueOf(value.intValue()));
+                        rowParts.add("0");
                     }
-                } else {
-                    rowParts.add("0");
                 }
+                result.add(String.join(",", rowParts));
             }
-            result.add(String.join(",", rowParts));
+        } catch (Exception e) {
+            throw new IOException("Error al procesar agregaciones: " + e.getMessage());
         }
         
         return result;
@@ -225,33 +227,32 @@ public class SelectManager {
         // Almacenar las filas combinadas
         List<JoinProcessor.JoinedRow> allJoinedRows = new ArrayList<>();
         
-        // Procesar cada JOIN
-        for (int j = 0; j < mainTable.getJoinedTables().size(); j++) {
-            TableReference joinedTable = mainTable.getJoinedTables().get(j);
-            JoinCondition joinCond = mainTable.getJoinConditions().get(j);
-            
-            File joinFile = requireTableFile(joinedTable.getTableName());
-            List<String> joinHeaders = tableFileHandler.readHeaderColumns(joinFile);
-            String joinPK = tableFileHandler.getPrimaryKeyColumn(joinFile);
-            int joinStartIndex = (joinPK != null && !joinPK.isEmpty() ? 2 : 1);
-            List<String> joinLines = tableFileHandler.readAllLines(joinFile);
-            String[] joinHeaderArray = joinHeaders.toArray(new String[0]);
-            
-            // Realizar INNER JOIN
-            String[] mainDataArray = mainLines.subList(mainStartIndex, mainLines.size()).toArray(new String[0]);
-            String[] joinDataArray = joinLines.subList(joinStartIndex, joinLines.size()).toArray(new String[0]);
-            
-            if (j == 0) {
-                allJoinedRows = JoinProcessor.performInnerJoin(mainHeaderArray, mainDataArray, joinHeaderArray, joinDataArray, joinCond);
-            } else {
-                // Para múltiples JOINs, combinar con resultados anteriores
-                List<JoinProcessor.JoinedRow> combinedRows = new ArrayList<>();
-                for (JoinProcessor.JoinedRow prevRow : allJoinedRows) {
-                    // Aquí habría que implementar lógica adicional para múltiples JOINs
-                    combinedRows.add(prevRow);
+        try {
+            // Procesar cada JOIN
+            for (int j = 0; j < mainTable.getJoinedTables().size(); j++) {
+                TableReference joinedTable = mainTable.getJoinedTables().get(j);
+                JoinCondition joinCond = mainTable.getJoinConditions().get(j);
+                
+                File joinFile = requireTableFile(joinedTable.getTableName());
+                List<String> joinHeaders = tableFileHandler.readHeaderColumns(joinFile);
+                String joinPK = tableFileHandler.getPrimaryKeyColumn(joinFile);
+                int joinStartIndex = (joinPK != null && !joinPK.isEmpty() ? 2 : 1);
+                List<String> joinLines = tableFileHandler.readAllLines(joinFile);
+                String[] joinHeaderArray = joinHeaders.toArray(new String[0]);
+                String[] joinDataArray = joinLines.subList(joinStartIndex, joinLines.size()).toArray(new String[0]);
+                
+                if (j == 0) {
+                    // Primer JOIN: usar tabla principal contra primera tabla a joinear
+                    String[] mainDataArray = mainLines.subList(mainStartIndex, mainLines.size()).toArray(new String[0]);
+                    allJoinedRows = JoinProcessor.performInnerJoin(mainHeaderArray, mainDataArray, joinHeaderArray, joinDataArray, joinCond);
+                } else {
+                    // Múltiples JOINs: usar resultados anteriores (no implementado completamente)
+                    // Para ahora, solo retornamos los resultados del primer JOIN
+                    // Una implementación completa requeriría convertir JoinedRow de vuelta a headers/data
                 }
-                allJoinedRows = combinedRows;
             }
+        } catch (Exception e) {
+            throw new IOException("Error al realizar JOIN: " + e.getMessage());
         }
         
         if (allJoinedRows.isEmpty()) {

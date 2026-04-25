@@ -1,0 +1,4 @@
+
+idtipoOperacion,nombreOperacion
+1,"Captaciones"
+2,"Colocaciones"

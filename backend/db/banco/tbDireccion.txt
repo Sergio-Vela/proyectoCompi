@@ -1,0 +1,3 @@
+
+idDireccion,idCLiente,Direccion,idEstado,idUbigeo1,idUbigeo2
+1,2,"Ciudad",1,1,1

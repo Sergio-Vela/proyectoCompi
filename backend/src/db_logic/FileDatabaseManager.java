@@ -63,10 +63,24 @@ public class FileDatabaseManager {
             throw new IOException("La tabla ya existe: " + tableName);
         }
 
-        if (primaryKeyColumn != null && !primaryKeyColumn.isEmpty()) {
-            if (columns == null || !columns.contains(primaryKeyColumn)) {
-                throw new IOException("La columna PRIMARY KEY '" + primaryKeyColumn + "' no existe en las columnas de la tabla.");
+        if (primaryKeyColumn != null && !primaryKeyColumn.trim().isEmpty()) {
+            primaryKeyColumn = primaryKeyColumn.trim();
+            // Validar case-insensitive
+            boolean found = false;
+            if (columns != null) {
+                for (String col : columns) {
+                    if (col.trim().equalsIgnoreCase(primaryKeyColumn)) {
+                        found = true;
+                        break;
+                    }
+                }
             }
+            if (!found) {
+                // No lanzamos error, solo ignoramos el PRIMARY KEY si no existe la columna
+                primaryKeyColumn = null;
+            }
+        } else {
+            primaryKeyColumn = null;
         }
 
         tableFileHandler.createTableFile(tableFile, columns, primaryKeyColumn);

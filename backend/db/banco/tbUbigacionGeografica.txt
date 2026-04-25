@@ -1,0 +1,8 @@
+
+idUbigeo1,NombreUbigeo
+1,"Guatemala"
+2,"Alta Verapaz"
+3,"Baja Verapaz"
+4,"Chimaltenango"
+5,"Quetzaltenango"
+6,"Totonicapan"

@@ -1,1 +1,2 @@
-select * from tabla;
+use banco;
+Select * from tbUbigacionGeografica

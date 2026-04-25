@@ -63,27 +63,42 @@ public class InsertManager {
     }
 
     private void validatePrimaryKeyUniqueness(File tableFile, List<String> headerColumns, String primaryKeyColumn, List<String> newValues) throws IOException {
-        if (primaryKeyColumn == null || primaryKeyColumn.isEmpty()) {
+        if (primaryKeyColumn == null || primaryKeyColumn.trim().isEmpty()) {
             return;
         }
 
-        int primaryKeyIndex = headerColumns.indexOf(primaryKeyColumn);
+        primaryKeyColumn = primaryKeyColumn.trim();
+        
+        // Buscar el índice de la columna PRIMARY KEY (con trim en comparación)
+        int primaryKeyIndex = -1;
+        for (int i = 0; i < headerColumns.size(); i++) {
+            if (headerColumns.get(i).trim().equalsIgnoreCase(primaryKeyColumn)) {
+                primaryKeyIndex = i;
+                break;
+            }
+        }
+        
+        // Si la columna no existe, simplemente no validamos duplicados
         if (primaryKeyIndex < 0) {
-            throw new IOException("La columna PRIMARY KEY no existe en las columnas de la tabla.");
+            return;
         }
 
         if (primaryKeyIndex >= newValues.size()) {
-            throw new IOException("El valor para la PRIMARY KEY no fue proporcionado.");
+            return;
         }
 
-        String newPrimaryKeyValue = newValues.get(primaryKeyIndex);
+        String newPrimaryKeyValue = newValues.get(primaryKeyIndex).trim();
+        if (newPrimaryKeyValue.isEmpty()) {
+            return;
+        }
 
         List<String> allLines = tableFileHandler.readAllLines(tableFile);
-        int startRow = (primaryKeyColumn != null && !primaryKeyColumn.isEmpty() ? 2 : 1);
+        int startRow = 2;  // Línea 0: PRIMARY KEY metadata, Línea 1: headers, Línea 2+: datos
 
         for (int i = startRow; i < allLines.size(); i++) {
             String line = allLines.get(i);
-            String[] parts = line.split(",");
+            if (line.trim().isEmpty()) continue;
+            String[] parts = line.split(",", -1);
             if (primaryKeyIndex < parts.length) {
                 String existingValue = parts[primaryKeyIndex].trim();
                 if (existingValue.equals(newPrimaryKeyValue)) {

@@ -2,12 +2,12 @@ CREATE DATABASE banco;
 USE banco;
  
 CREATE TABLE tb_analisis (
-  idcuenta INT,
+  idcuenta INT PRIMARY KEY,
   idproducto INT
 );
 
 CREATE TABLE tbBitacora (
-  idbitacora INT,
+  idbitacora INT PRIMARY KEY,
   Fecha VARCHAR(50),
   idmotivoconsulta INT,
   idCliente INT,
@@ -15,7 +15,7 @@ CREATE TABLE tbBitacora (
 );
   
 CREATE TABLE tbCliente (
-  idCLiente INT,
+  idCLiente INT PRIMARY KEY,
   PrimerNombre VARCHAR(50),
   SegundoNombre VARCHAR(50),
   TercerNombre VARCHAR(50),
@@ -34,21 +34,21 @@ CREATE TABLE tbCliente (
 );
  
 CREATE TABLE tbDireccion (
+  idDireccion INT PRIMARY KEY,
   idCLiente INT,
   Direccion VARCHAR(200),
   idEstado INT,
-  idDireccion INT,
   idUbigeo1 INT,
   idUbigeo2 INT
 );
  
 CREATE TABLE tbEstado (
-  idEstado INT,
+  idEstado INT PRIMARY KEY,
   Estado VARCHAR(50)
 );
  
 CREATE TABLE tbhistorialcrediticio (
-  idCuenta INT,
+  idCuenta INT PRIMARY KEY,
   FechaCorte VARCHAR(50),
   SaldoActual DECIMAL(10,2),
   SaldoMora DECIMAL(10,2),
@@ -58,13 +58,13 @@ CREATE TABLE tbhistorialcrediticio (
 );
  
 CREATE TABLE tbIdentificacionCliente (
-  idCliente INT,
+  idCliente INT PRIMARY KEY,
   Documento VARCHAR(50),
   idtipodocumento INT
 );
  
 CREATE TABLE tbObligacion (
-  idCuenta INT,
+  idCuenta INT PRIMARY KEY,
   idProducto INT,
   idcliente INT,
   FechaAperturo VARCHAR(50),
@@ -74,25 +74,25 @@ CREATE TABLE tbObligacion (
 );
  
 CREATE TABLE tbSursal (
-  idSucursal INT,
+  idSucursal INT PRIMARY KEY,
   NombreSucursal VARCHAR(100),
   Direccion VARCHAR(200),
   Telefono VARCHAR(50)
 );
  
 CREATE TABLE tbtipodocumento (
-  idtipodocumento INT,
+  idtipodocumento INT PRIMARY KEY,
   tipodocumento VARCHAR(50),
   idEstado INT
 );
  
 CREATE TABLE tbtipoOperacion (
-  idtipoOperacion INT,
+  idtipoOperacion INT PRIMARY KEY,
   nombreOperacion VARCHAR(100)
 );
  
 CREATE TABLE tbtipoProducto (
-  idProducto INT,
+  idProducto INT PRIMARY KEY,
   NombreProducto VARCHAR(100),
   idtipoOperacion INT,
   idEstado INT,
@@ -106,18 +106,17 @@ CREATE TABLE tbtipoProducto (
 );
  
 CREATE TABLE tbUbicacionGeografica2 (
-  idUbigeo2 INT,
+  idUbigeo2 INT PRIMARY KEY,
   idUbigeo1 INT,
   Nombre VARCHAR(50)
 );
  
 CREATE TABLE tbUbigacionGeografica (
-  idUbigeo1 INT,
+  idUbigeo1 INT PRIMARY KEY,
   NombreUbigeo VARCHAR(50)
 );
 
-
-
+use banco;
 INSERT INTO tb_analisis (idcuenta, idproducto) VALUES (1, 1);
 INSERT INTO tb_analisis (idcuenta, idproducto) VALUES (3, 1);
  
