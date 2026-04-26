@@ -1,7 +1,0 @@
-id,nombre,edad
-1,'Juan',25
-2,'Ana Maria',22
-3,'sergio',29
-4,'Layla',19
-5,'Bryan',5
-6,'maria',22

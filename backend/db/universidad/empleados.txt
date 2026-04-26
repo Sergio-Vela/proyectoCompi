@@ -1,0 +1,5 @@
+
+id,nombre,salario,depto_id
+1,'Mario',15000.0,1
+2,'Lucia',3300.0,1
+1,'Sergio',15000.0,1

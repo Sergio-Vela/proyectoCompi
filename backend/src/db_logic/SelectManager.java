@@ -38,8 +38,8 @@ public class SelectManager {
 
         List<String> result = new ArrayList<String>();
         
-        // Si hay agregaciones y GROUP BY
-        if (query.hasAggregations() && groupByColumns != null && !groupByColumns.isEmpty()) {
+        // Si hay agregaciones (con o sin GROUP BY)
+        if (query.hasAggregations()) {
             return handleAggregationQuery(query, headerColumns, tableFile, condition, groupByColumns);
         }
 
@@ -163,7 +163,10 @@ public class SelectManager {
         List<String> result = new ArrayList<String>();
         
         // Construir header
-        List<String> headerParts = new ArrayList<>(groupByColumns);
+        List<String> headerParts = new ArrayList<>();
+        if (groupByColumns != null && !groupByColumns.isEmpty()) {
+            headerParts.addAll(groupByColumns);
+        }
         for (AggregationFunction agg : query.getAggregations()) {
             headerParts.add(agg.getDisplayName());
         }
@@ -244,7 +247,30 @@ public class SelectManager {
                 if (j == 0) {
                     // Primer JOIN: usar tabla principal contra primera tabla a joinear
                     String[] mainDataArray = mainLines.subList(mainStartIndex, mainLines.size()).toArray(new String[0]);
-                    allJoinedRows = JoinProcessor.performInnerJoin(mainHeaderArray, mainDataArray, joinHeaderArray, joinDataArray, joinCond);
+                    
+                    // Resolver qué columna corresponde a qué tabla según sus nombres/alias
+                    String leftColName = resolveJoinColumn(mainTable, joinCond.getLeftTable(), joinCond.getLeftColumn());
+                    String rightColName = resolveJoinColumn(joinedTable, joinCond.getRightTable(), joinCond.getRightColumn());
+                    
+                    // Si están al revés (tabla derecha en left y tabla izquierda en right), intercambiar
+                    if (joinCond.getLeftTable() != null && joinCond.getLeftTable().equalsIgnoreCase(joinedTable.getAlias())) {
+                        // Intercambiar: la condición está al revés
+                        String temp = leftColName;
+                        leftColName = rightColName;
+                        rightColName = temp;
+                        
+                        String[] tempHeaders = mainHeaderArray;
+                        mainHeaderArray = joinHeaderArray;
+                        joinHeaderArray = tempHeaders;
+                        
+                        String[] tempData = mainDataArray;
+                        mainDataArray = joinDataArray;
+                        joinDataArray = tempData;
+                    }
+                    
+                    // Crear nueva condición con columnas resueltas
+                    JoinCondition resolvedCond = new JoinCondition(mainTable.getAlias(), leftColName, joinedTable.getAlias(), rightColName);
+                    allJoinedRows = JoinProcessor.performInnerJoin(mainHeaderArray, mainDataArray, joinHeaderArray, joinDataArray, resolvedCond);
                 } else {
                     // Múltiples JOINs: usar resultados anteriores (no implementado completamente)
                     // Para ahora, solo retornamos los resultados del primer JOIN
@@ -292,6 +318,12 @@ public class SelectManager {
         }
 
         return conditionEvaluator.matches(rowValues[columnIndex], condition);
+    }
+
+    private String resolveJoinColumn(TableReference table, String tableAlias, String columnName) {
+        // Simplemente retorna el nombre de columna sin considerar el alias
+        // Porque el alias no afecta cómo se llama la columna en la tabla
+        return columnName;
     }
 
     private boolean matchesConditionSimple(String[] rowValues, List<String> headerColumns, ConditionSpec condition) throws IOException {

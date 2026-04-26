@@ -1,0 +1,4 @@
+
+id,nombre,precio
+1,'Laptop',8000.0
+2,'Mouse',150.0

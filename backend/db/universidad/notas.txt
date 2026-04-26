@@ -1,0 +1,2 @@
+
+id,estudiante_id,curso_id,nota

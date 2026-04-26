@@ -1,0 +1,4 @@
+
+id,nombre,edad,score
+1,'Juan',20,88.0
+2,'Ana',23,90.0

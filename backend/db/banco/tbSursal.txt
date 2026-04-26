@@ -1,4 +1,0 @@
-
-idSucursal,NombreSucursal,Direccion,Telefono
-1,"Central","Ciudad","122122"
-2,"Agencia zona 1","Ciudad","122122"

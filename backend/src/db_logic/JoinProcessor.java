@@ -24,25 +24,31 @@ public class JoinProcessor {
         List<JoinedRow> result = new ArrayList<>();
         
         // Encontrar índices de las columnas de JOIN
+        // Las columnas en joinCondition pueden ser simples (id) o calificadas (alias.id)
+        String leftColName = joinCondition.getLeftColumn();
+        String rightColName = joinCondition.getRightColumn();
+        
         int leftJoinIndex = -1;
         int rightJoinIndex = -1;
         
+        // Buscar en headers izquierdo
         for (int i = 0; i < leftHeaders.length; i++) {
-            if (leftHeaders[i].trim().equals(joinCondition.getLeftColumn())) {
+            if (leftHeaders[i].trim().equalsIgnoreCase(leftColName)) {
                 leftJoinIndex = i;
                 break;
             }
         }
         
+        // Buscar en headers derecho
         for (int i = 0; i < rightHeaders.length; i++) {
-            if (rightHeaders[i].trim().equals(joinCondition.getRightColumn())) {
+            if (rightHeaders[i].trim().equalsIgnoreCase(rightColName)) {
                 rightJoinIndex = i;
                 break;
             }
         }
         
         if (leftJoinIndex < 0 || rightJoinIndex < 0) {
-            throw new Exception("Columnas de JOIN no encontradas");
+            throw new Exception("Columnas de JOIN no encontradas: buscando '" + leftColName + "' y '" + rightColName + "'");
         }
         
         // Realizar INNER JOIN

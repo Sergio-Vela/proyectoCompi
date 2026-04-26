@@ -383,6 +383,8 @@ table_factor ::= ID:name
 
 join_on_condition ::= ID:leftTable DOT ID:leftCol EQUALS ID:rightTable DOT ID:rightCol
                     {: RESULT = new JoinCondition(leftTable, leftCol, rightTable, rightCol); :}
+                    | LPAREN ID:leftTable DOT ID:leftCol EQUALS ID:rightTable DOT ID:rightCol RPAREN
+                    {: RESULT = new JoinCondition(leftTable, leftCol, rightTable, rightCol); :}
                     ;
 
 column_list ::= column_list:list COMMA column:col

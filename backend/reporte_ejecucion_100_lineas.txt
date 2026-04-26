@@ -1,0 +1,12 @@
+
+ERROR: Ejecucion | Error al realizar JOIN: Columnas de JOIN no encontradas
+ERROR: Ejecucion | Error al realizar JOIN: Columnas de JOIN no encontradas
+ERROR: Ejecucion | Error al realizar JOIN: Columnas de JOIN no encontradas
+ERROR: Ejecucion | Error al realizar JOIN: Columnas de JOIN no encontradas
+
+
+errores mostrados en en frontend:
+1	-	-	Error al realizar JOIN: Columnas de JOIN no encontradas	Error de Ejecución
+2	-	-	Error al realizar JOIN: Columnas de JOIN no encontradas	Error de Ejecución
+3	-	-	Error al realizar JOIN: Columnas de JOIN no encontradas	Error de Ejecución
+4	-	-	Error al realizar JOIN: Columnas de JOIN no encontradas	Error de Ejecución

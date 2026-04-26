@@ -25,11 +25,18 @@ public class AggregationProcessor {
         
         Map<String, AggregationResult> groups = new HashMap<>();
         
+        // Si no hay GROUP BY, usar una sola clave
+        boolean hasGroupBy = groupByColumns != null && !groupByColumns.isEmpty();
+        
         for (String[] row : dataRows) {
-            String groupKey = buildGroupKey(row, headerColumns, groupByColumns);
+            String groupKey = hasGroupBy 
+                ? buildGroupKey(row, headerColumns, groupByColumns)
+                : "global";  // Clave única para agregar todo
             
             if (!groups.containsKey(groupKey)) {
-                List<String> groupValues = extractGroupValues(row, headerColumns, groupByColumns);
+                List<String> groupValues = hasGroupBy
+                    ? extractGroupValues(row, headerColumns, groupByColumns)
+                    : new ArrayList<>();  // Vacío si no hay GROUP BY
                 groups.put(groupKey, new AggregationResult(groupValues));
             }
             
@@ -85,7 +92,9 @@ public class AggregationProcessor {
                     String key = agg.getDisplayName();
                     int count = 0;
                     for (String[] row : dataRows) {
-                        String groupKey = buildGroupKey(row, headerColumns, groupByColumns);
+                        String groupKey = hasGroupBy
+                            ? buildGroupKey(row, headerColumns, groupByColumns)
+                            : "global";
                         if (buildGroupKey(result.groupValues, groupByColumns).equals(groupKey)) {
                             count++;
                         }
@@ -112,6 +121,9 @@ public class AggregationProcessor {
     }
     
     private static String buildGroupKey(List<String> groupValues, List<String> groupByColumns) {
+        if (groupByColumns == null || groupByColumns.isEmpty()) {
+            return "global";
+        }
         StringBuilder key = new StringBuilder();
         for (String value : groupValues) {
             key.append(value).append("|");

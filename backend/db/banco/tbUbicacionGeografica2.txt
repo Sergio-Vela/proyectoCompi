@@ -1,7 +1,0 @@
-
-idUbigeo2,idUbigeo1,Nombre
-1,1,"Guatemala"
-2,1,"Villa Nueva"
-3,1,"Mixco"
-4,1,"San Jose Pinula"
-5,2,"Coban"

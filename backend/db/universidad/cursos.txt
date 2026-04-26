@@ -1,0 +1,4 @@
+
+id,nombre,creditos
+1,'Compiladores',6
+2,'Algoritmos',4

@@ -1,4 +1,0 @@
-
-idtipodocumento,tipodocumento,idEstado
-1,"DPI",1
-2,"NIT",1

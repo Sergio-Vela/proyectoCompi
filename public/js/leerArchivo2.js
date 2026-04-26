@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(res => res.text())
             .then(data => manejarRespuesta(data));
+        
+        cargarSidebar();
 
     });
 
@@ -282,4 +284,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // iniciar con 1 
     actualizarLineas();
+
+    document.getElementById("btnRecargarSidebar")
+    .addEventListener("click", () => {
+        cargarSidebar();
+    });
 });

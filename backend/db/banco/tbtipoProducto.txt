@@ -1,8 +1,0 @@
-
-idProducto,NombreProducto,idtipoOperacion,idEstado,tasainteres,montominimo,montomaximo,idtipoGarantia,plazominimo,plazomaximo,fechacreacion
-1,"Tarjeta de Credito Basica",2,1,"25.5","100",5000.0,1,0,0,"2024/04/01"
-2,"Tarjeta de Credito Empresas",2,1,"17.5","10000",75000.0,1,0,0,"2024/04/01"
-3,"Tarjeta de Credito Internacional",2,1,"20.5","800",10000.0,1,0,0,"2024/04/01"
-4,"Prestamo Personal",2,1,"35.5","10000",100000.0,1,0,0,"2024/04/01"
-5,"Prestamo Hipotecario",2,1,"9.01","150000",500000.0,1,0,0,"2024/04/01"
-6,"Prestamo Prendario",2,1,"45.5","100",5000.0,1,0,0,"2024/04/01"
